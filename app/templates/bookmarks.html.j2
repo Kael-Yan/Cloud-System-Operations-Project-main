@@ -1,0 +1,45 @@
+{% extends "index.html.j2" %}
+
+{% block app_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default" style="margin-bottom: 16px; border-radius: 8px;">
+                <div class="panel-body" style="padding: 12px 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <button id="refreshBtn" class="btn btn-default btn-sm" 
+                                style="border: none; background: transparent; color: #666;">
+                            <span class="glyphicon glyphicon-refresh"></span> 重新整理
+                        </button>
+                        <h4 style="font-weight: bold;margin-right:40px">留名</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="topicsContainer" class="topic-list">
+                {% include '_topics_list.html.j2' %}
+            </div>
+            
+            <!-- 分頁導航 -->
+            <nav aria-label="Page navigation">
+                <ul class="pager">
+                    {% if pagination.has_prev %}
+                    <li class="previous">
+                        <a href="{{ url_for('my_bookmarks', page=pagination.prev_num) }}">
+                            <span aria-hidden="true">&larr;</span> 上一頁
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if pagination.has_next %}
+                    <li class="next">
+                        <a href="{{ url_for('my_bookmarks', page=pagination.next_num) }}">
+                            下一頁 <span aria-hidden="true">&rarr;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,494 @@
+{% extends "base.html.j2" %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    /* 主題列表樣式 */
+    .topic-list {
+        margin-top: 20px;
+    }
+    
+    /* 單個主題面板樣式 */
+    .topic-card {
+        border-radius: 8px;
+        border: 1px solid #e1e1e1;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+        background: white;
+        overflow: hidden;
+    }
+
+    body.dark-mode .topic-card {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+    
+    .topic-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #346599;
+    }
+
+    body.dark-mode .topic-card:hover {
+        border-color: #5a8fd3;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .topic-content {
+        padding: 16px;
+    }
+
+    body.dark-mode .topic-content {
+        color: #e0e0e0;
+    }
+    
+    /* 用戶名樣式 - 根據性別 */
+    .username {
+        font-weight: bold;
+        transition: all 0.2s ease;
+    }
+    
+    .username.male {
+        color: #346599;  /* 男性藍色 */
+    }
+
+    body.dark-mode .username.male {
+        color: #5a8fd3;
+    }
+    
+    .username.female {
+        color: #d9534f;  /* 女性紅色 */
+    }
+
+    body.dark-mode .username.female {
+        color: #ff6b6b;
+    }
+    
+    .username:hover {
+        text-decoration: underline;
+    }
+    
+    /* 元信息樣式 */
+    .meta-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    body.dark-mode .meta-info {
+        color: #aaa;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        margin-right: 16px;
+    }
+    
+    .meta-item .icon {
+        margin-right: 4px;
+    }
+    
+    /* 分類標籤 */
+    .category-tag {
+        background-color: #f1f4ff;
+        color: #445b85;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    body.dark-mode .category-tag {
+        background-color: #3a4a6b;
+        color: #d0d9ff;
+    }
+    
+    /* 主題標題 */
+    .topic-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 8px 0 12px;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    body.dark-mode .topic-title {
+        color: #e0e0e0;
+    }
+    
+    /* 圖片預覽 */
+    .topic-image {
+        max-height: 300px;
+        width: auto;
+        max-width: 100%;
+        border-radius: 4px;
+        margin-top: 12px;
+    }
+    
+    /* 載入指示器 */
+    .loading-indicator {
+        text-align: center;
+        padding: 24px;
+        display: none;
+    }
+
+    body.dark-mode .loading-indicator {
+        color: #e0e0e0;
+    }
+    
+    .no-more-topics {
+        text-align: center;
+        padding: 16px;
+        color: #666;
+        font-size: 14px;
+        display: none;
+    }
+
+    body.dark-mode .no-more-topics {
+        color: #aaa;
+    }
+    
+    /* 刷新按鈕動畫 */
+    .refresh-animate {
+        animation: spin 0.7s infinite linear;
+    }
+    
+    /* 導航按鈕容器 */
+    .nav-buttons-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    /* 圖片按鈕提示 */
+    #toggleImagesBtn,#new_tpicBtn {
+        position: relative;
+    }
+    
+    #toggleImagesBtn .tooltip-text,#new_tpicBtn .tooltip-text {
+        visibility: hidden;
+        width: 80px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -40px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+    }
+
+    body.dark-mode #toggleImagesBtn .tooltip-text,
+    body.dark-mode #new_tpicBtn .tooltip-text {
+        background-color: #333;
+    }
+    
+    #toggleImagesBtn:hover .tooltip-text,#new_tpicBtn:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* 面板樣式 */
+    .panel-default {
+        background-color: white;
+        border-color: #ddd;
+    }
+
+    body.dark-mode .panel-default {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+
+    .panel-body {
+        background-color: white;
+    }
+
+    body.dark-mode .panel-body {
+        background-color: #2d2d2d;
+    }
+
+    body.dark-mode h4 {
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .btn-default {
+        background-color: #444;
+        color: #e0e0e0;
+        border-color: #555;
+    }
+
+    body.dark-mode .btn-default:hover {
+        background-color: #555;
+    }
+
+    body.dark-mode .btn-primary {
+        background-color: #3a5f8a;
+        border-color: #3a5f8a;
+    }
+
+    body.dark-mode .btn-primary:hover {
+        background-color: #4a6f9a;
+        border-color: #4a6f9a;
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default" style="margin-bottom: 16px; border-radius: 8px;">
+                <div class="panel-body" style="padding: 12px 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <button id="refreshBtn" class="btn btn-default btn-sm" 
+                                style="border: none; background: transparent; color: #666;">
+                            <span class="glyphicon glyphicon-refresh"></span> 重新整理
+                        </button>
+                        <h4 style="font-weight: bold; margin: 0;">{{ category_name }}</h4>
+                        <div class="nav-buttons-container">
+                            <button id="toggleImagesBtn" class="btn btn-primary btn-sm" style="padding: 6px 12px; border-radius: 4px;">
+                                <span class="glyphicon glyphicon-picture"></span>
+                                <span class="tooltip-text">圖文模式</span>
+                            </button>
+                            {% if current_user.is_authenticated %}
+                            <a id="new_tpicBtn" href="{{ url_for('new_topic') }}" class="btn btn-primary btn-sm" 
+                               style="padding: 6px 12px; border-radius: 4px;">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="tooltip-text">開新貼文</span> 
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="topicsContainer" class="topic-list">
+                {% include '_topics_list.html.j2' %}
+            </div>
+            
+            <div id="loadingIndicator" class="loading-indicator">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">載入中...</span>
+                </div>
+                <p style="margin-top: 12px;">正在載入更多主題...</p>
+            </div>
+            
+            <div id="noMoreTopics" class="no-more-topics">
+                <p>已經沒有更多主題了</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // 設置moment.js為中文
+    moment.locale('zh-tw', {
+        relativeTime: {
+            future: '%s內',
+            past: '%s前',
+            s: '幾秒',
+            m: '1分鐘',
+            mm: '%d分鐘',
+            h: '1小時',
+            hh: '%d小時',
+            d: '1天',
+            dd: '%d天',
+            M: '1個月',
+            MM: '%d個月',
+            y: '1年',
+            yy: '%d年'
+        }
+    });
+
+    // 無限滾動變量
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMore = true;
+    const category = "{{ category_name }}";
+
+    // 圖片顯示控制功能
+    const toggleImagesBtn = $('#toggleImagesBtn');
+    let showImages = localStorage.getItem('showImages') !== 'false';
+    
+    // 初始化按鈕狀態
+    updateButtonState();
+    
+    // 點擊切換圖片顯示
+    toggleImagesBtn.click(function() {
+        showImages = !showImages;
+        localStorage.setItem('showImages', showImages);
+        updateButtonState();
+        toggleTopicImages();
+    });
+    
+    function updateButtonState() {
+        const icon = showImages ? 'glyphicon-picture' : 'glyphicon-ban-circle';
+        toggleImagesBtn.find('.glyphicon').removeClass('glyphicon-picture glyphicon-ban-circle').addClass(icon);
+        toggleImagesBtn.find('.tooltip-text').text(showImages ? '圖文模式' : '純文字模式');
+    }
+
+    // 修改 toggleTopicImages 函數
+    function toggleTopicImages() {
+        $('.topic-panel').each(function() {
+            const image = $(this).find('.topic-image');
+            if (showImages) {
+                image.show();
+            } else {
+                image.hide();
+            }
+        });
+    }
+    
+    // 初始載入時應用設置
+    toggleTopicImages();
+
+    // 刷新按鈕功能
+    $('#refreshBtn').click(function() {
+        var currentCategory = window.location.pathname.split('/').pop() || 
+                         sessionStorage.getItem('last_category') || 
+                         '吹水台';
+    
+        $(this).find('.glyphicon').addClass('refresh-animate');
+        
+        // 重置狀態
+        currentPage = 1;
+        hasMore = true;
+        $('#noMoreTopics').hide();
+        
+        $.ajax({
+            url: `/category/${currentCategory}?page=1`,
+            type: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(data) {
+                $('#topicsContainer').html(data);
+                
+                // 重新初始化 moment.js 的時間顯示
+                if (typeof moment !== 'undefined') {
+                    moment.locale('zh-tw');
+                    $('.moment-time').each(function() {
+                        const timestamp = $(this).data('timestamp');
+                        if (timestamp) {
+                            try {
+                                const utcMoment = moment.utc(timestamp);
+                                if (utcMoment.isValid()) {
+                                    const localTime = utcMoment.local();
+                                    $(this).text(localTime.fromNow());
+                                    $(this).attr('title', localTime.format('YYYY-MM-DD HH:mm:ss'));
+                                } else {
+                                    console.warn('Invalid timestamp:', timestamp);
+                                    $(this).text('時間錯誤');
+                                }
+                            } catch (error) {
+                                console.error('Error processing timestamp:', timestamp, error);
+                                $(this).text('時間錯誤');
+                            }
+                        }
+                    });
+                }
+                
+                // 應用圖片顯示設置
+                toggleTopicImages();
+            },
+            complete: function() {
+                $('#refreshBtn').find('.glyphicon').removeClass('refresh-animate');
+            }
+        });
+    });
+
+    // 載入更多主題函數
+    function loadMoreTopics() {
+        if (isLoading || !hasMore) return;
+        
+        isLoading = true;
+        currentPage++;
+        $('#loadingIndicator').show();
+        
+        $.ajax({
+            url: `/category/${category}?page=${currentPage}`,
+            type: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(data) {
+                if (data.trim() === '') {
+                    hasMore = false;
+                    $('#noMoreTopics').show();
+                } else {
+                    $('#topicsContainer').append(data);
+                    initMomentTime();
+                    // 確保新載入的內容也應用圖片顯示設置
+                    toggleTopicImages();
+                }
+            },
+            error: function() {
+                currentPage--; // 載入失敗時回退頁碼
+            },
+            complete: function() {
+                isLoading = false;
+                $('#loadingIndicator').hide();
+            }
+        });
+    }
+
+    // 初始化 moment 時間顯示的函數
+    function initMomentTime() {
+        if (typeof moment !== 'undefined') {
+            moment.locale('zh-tw');
+            $('.moment-time').each(function() {
+                const timestamp = $(this).data('timestamp');
+                if (timestamp) {
+                    try {
+                        // 確保時間戳是有效的 ISO 格式
+                        const utcMoment = moment.utc(timestamp);
+                        if (utcMoment.isValid()) {
+                            const localTime = utcMoment.local();
+                            $(this).text(localTime.fromNow());
+                            // 添加 title 屬性顯示完整時間（用於調試）
+                            $(this).attr('title', localTime.format('YYYY-MM-DD HH:mm:ss'));
+                        } else {
+                            console.warn('Invalid timestamp:', timestamp);
+                            $(this).text('時間錯誤');
+                        }
+                    } catch (error) {
+                        console.error('Error processing timestamp:', timestamp, error);
+                        $(this).text('時間錯誤');
+                    }
+                }
+            });
+        }
+    }
+
+    // 初始載入時檢查是否需要自動載入更多
+    $(document).ready(function() {
+        let showImages = localStorage.getItem('showImages') !== 'false';
+        updateButtonState();
+        toggleTopicImages();
+
+
+        if ($(window).height() >= $(document).height()) {
+            loadMoreTopics();
+        }
+    });
+
+    // 無限滾動載入更多
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() > $(document).height() - 300) {
+            loadMoreTopics();
+        }
+    });
+</script>
+{% endblock %}

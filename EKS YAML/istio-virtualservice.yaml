@@ -1,0 +1,26 @@
+# istio-virtualservice.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: dilwl-campus-4122
+  namespace: default
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dilwl-campus-4122-gateway
+  http:
+  - route:
+    - destination:
+        host: dilwl-campus-4122-service
+        subset: v1
+        port:
+          number: 80
+      weight: 80
+    - destination:
+        host: dilwl-campus-4122-service
+        subset: v2
+        port:
+          number: 80
+      weight: 20
+    timeout: 5s

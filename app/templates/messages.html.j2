@@ -1,0 +1,121 @@
+{% extends "base.html.j2" %}
+{% block styles %}
+{{ super() }}
+<style>
+
+    body.dark-mode .panel-heading {
+        background-color: #0d0d0d;
+        border-color: #444;
+    }
+
+    body.dark-mode .panel-default {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+
+    .panel-body {
+        background-color: white;
+    }
+
+    body.dark-mode .panel-body {
+        background-color: #2d2d2d;
+    }
+
+    body.dark-mode h4 {
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .btn-default {
+        background-color: #444;
+        color: #e0e0e0;
+        border-color: #555;
+    }
+
+    body.dark-mode .btn-default:hover {
+        background-color: #555;
+    }
+
+    body.dark-mode .btn-primary {
+        background-color: #3a5f8a;
+        border-color: #3a5f8a;
+    }
+
+    body.dark-mode .btn-primary:hover {
+        background-color: #4a6f9a;
+        border-color: #4a6f9a;
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="container">
+    <h1>我的訊息</h1>
+    <div class="row">
+        <div class="col-md-8">
+            {% for message in messages %}
+            <div class="panel panel-default">
+                <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <a href="{{ url_for('user', username=message.sender.username) }}">
+                            {{ message.sender.username }}
+                        </a>
+                        <small class="text-muted" style="margin-left: 10px;">
+                            <span class="moment-time" data-timestamp="{{ message.timestamp }}"></span>
+                        </small>
+                    </div>
+                    <form action="{{ url_for('delete_message', message_id=message.id) }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('確定要刪除此訊息嗎？')">
+                            <span class="glyphicon glyphicon-trash"></span> 刪除
+                        </button>
+                    </form>
+                </div>
+                <div class="panel-body">
+                    {{ message.body }}
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if pagination.pages > 1 %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item{% if not pagination.has_prev %} disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('messages', page=pagination.prev_num) }}">
+                            &laquo;
+                        </a>
+                    </li>
+                    {% for p in pagination.iter_pages() %}
+                    <li class="page-item{% if p == pagination.page %} active{% endif %}">
+                        <a class="page-link" href="{{ url_for('messages', page=p) }}">{{ p }}</a>
+                    </li>
+                    {% endfor %}
+                    <li class="page-item{% if not pagination.has_next %} disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('messages', page=pagination.next_num) }}">
+                            &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    // Initialize moment.js for timestamps
+    if (typeof moment !== 'undefined') {
+        moment.locale('zh-tw');
+        $('.moment-time').each(function() {
+            var timestamp = $(this).data('timestamp');
+            if (timestamp) {
+                var localTime = moment.utc(timestamp).local();
+                $(this).text(localTime.fromNow());
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

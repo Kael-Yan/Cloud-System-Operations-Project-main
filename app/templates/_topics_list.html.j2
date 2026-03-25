@@ -1,0 +1,62 @@
+<div id="topicsContainer">
+    {% if posts %}
+        {% for post in posts %}
+        <div class="panel panel-default topic-panel {% if current_user.is_authenticated and post.author and current_user.is_blocking(post.author) %}blocked-content{% endif %}">
+            {% if current_user.is_authenticated and post.author and current_user.is_blocking(post.author) %}
+            <div class="blocked-header" style="padding: 10px 15px; background-color: #f8f8f8; border-bottom: 1px solid #ddd; cursor: pointer;" onclick="toggleBlockedContent(this)">
+                <span class="text-muted">已封鎖的用戶內容 ({{ post.author.username }})</span>
+                <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+            </div>
+            <div class="blocked-body" style="display: none;">
+            {% endif %}
+            
+            <a href="{{ url_for('topic', topic_id=post.id) }}" style="text-decoration: none; color: inherit;">
+                <div class="panel-body">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <div>
+                            <span class="username {% if post.author and post.author.gender == 'male' %}male{% elif post.author and post.author.gender == 'female' %}female{% endif %}">
+                                {{ post.author.username if post.author else 'Unknown User' }}
+                            </span>
+                            <span style="color: #999; margin-left: 10px; font-size: 12px;" 
+                                class="moment-time" 
+                                data-timestamp="{{ post.timestamp }}">
+                            </span>
+                            <span style="margin-right: 8px;color: #8a8a8a">&emsp;
+                            <span class="glyphicon glyphicon-comment"></span> {{ post.replies|length }} 
+                            </span>
+                            <span style="margin-right: 8px; color: #8a8a8a;">
+                                <span class="glyphicon glyphicon-thumbs-up"></span> {{ post.likes }} 
+                            </span>
+                            <span style="color: #8a8a8a;margin-right: 8px;">
+                                <span class="glyphicon glyphicon-thumbs-down"></span> {{ post.dislikes }} 
+                            </span>
+                        </div>
+                        <div>
+                            <span style="background-color: #f1f4ff; color: #445b85; padding: 2px 8px; border-radius: 12px; font-size: 16px;">
+                                {{ post.category }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 18px;">
+                        {{ post.title }}
+                    </h3>
+                    
+                    {% if post.image %}
+                        <img src="{{ post.image }}" 
+                            class="img-responsive topic-image" style="max-height: 300px; margin-bottom: 10px; border-radius: 4px;">
+                    {% endif %}
+                </div>
+            </a>
+            
+            {% if current_user.is_authenticated and post.author and current_user.is_blocking(post.author) %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            此分類目前沒有Topic，<a href="{{ url_for('new_topic') }}">成為第一個發文者</a>
+        </div>
+    {% endif %}
+</div>

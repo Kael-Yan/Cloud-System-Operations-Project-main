@@ -1,0 +1,1629 @@
+{% extends 'bootstrap/base.html' %}
+{% block title %}
+    {% if title %}
+        {{ title }} - 香港高登討論區
+    {% else %}
+        香港高登討論區
+    {% endif %}
+{% endblock title %}
+{% extends 'bootstrap/base.html' %}
+{% block title %}
+    {% if title %}
+        {{ title }} - 香港高登討論區
+    {% else %}
+        香港高登討論區
+    {% endif %}
+{% endblock title %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    body {
+        background-color: #f5f5f5;
+        font-family: "Microsoft JhengHei", "PingFang TC", "Helvetica Neue", Arial, sans-serif;
+        padding-top: 70px;
+        margin: 0;
+        overflow-x: hidden;
+    }
+    
+    /* Dark mode styles */
+    body.dark-mode {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .navbar-default {
+        background-color: #1e1e1e !important;
+        border-color: #1e1e1e !important;
+    }
+    
+    body.dark-mode .navbar-default .navbar-nav > li > a {
+        color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .left-margin,
+    body.dark-mode .right-margin {
+        background-color: #1e1e1e;
+    }
+    
+    /* 修正 sidebar 黑暗模式樣式 */
+    body.dark-mode .sidebar-container {
+        background-color: #1e1e1e !important;
+        border-right-color: #333 !important;
+    }
+    
+    body.dark-mode .sidebar-header {
+        background-color: #2d2d2d !important;
+        color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .sidebar-item {
+        color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .sidebar-item:hover {
+        background-color: #333 !important;
+        color: #d9534f !important;
+    }
+    
+    body.dark-mode .sidebar-item .glyphicon {
+        color: #aaa !important;
+    }
+    
+    body.dark-mode .main-content {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .topic-card {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+    
+    body.dark-mode .topic-title {
+        color: #e0e0e0;
+    }
+
+    .blocked-header {
+        background-color: #f8f8f8;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 15px;
+    }
+
+    .blocked-header:hover {
+        background-color: #f0f0f0;
+    }
+
+    .blocked-content .panel-body {
+        padding: 0;
+    }
+
+    body.dark-mode .blocked-header {
+        background-color: #333;
+        border-color: #444;
+    }
+
+    body.dark-mode .blocked-header:hover {
+        background-color: #3a3a3a;
+    }
+
+    /* 整體佈局容器 */
+    .layout-container {
+        display: flex;
+        min-height: calc(100vh - 70px);
+    }
+    
+    /* 左側空白區域 */
+    .left-margin {
+        display: none;
+    }
+    
+    /* 中間內容區域 */
+    .content-area {
+        width: 100%;
+        display: flex;
+        position: relative;
+    }
+    
+    /* 右側空白區域 */
+    .right-margin {
+        display: none;
+    }
+    
+    /* 導航欄樣式 */
+    .navbar-default {
+        background-color: #346599 !important;
+        border-color: #346599 !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .navbar-default .navbar-nav > li > a {
+        color: #fff !important;
+    }
+    
+    .navbar-default .navbar-nav > li > a:hover {
+        color: #141414 !important;
+    }
+    
+    /* 左側目錄樣式 - 固定位置 */
+    .sidebar-container {
+        position: fixed;
+        left: 0;
+        top: 70px;
+        bottom: 0;
+        width: 180px;
+        background-color: #f5f5f5;
+        border-right: 1px solid #e1e1e1;
+        box-shadow: 1px 0 3px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        z-index: 100;
+        overflow-y: auto;
+    }
+    
+    .sidebar-container.collapsed {
+        width: 53px;
+        overflow: hidden;
+        font-size: 16px;
+    }
+    
+    /* 側邊欄收起時調整左側空白區域 */
+    .sidebar-container.collapsed ~ .left-margin {
+        width: calc(20% - 167px);
+    }
+    
+    .sidebar-toggle {
+        position: fixed;
+        right: -15px;
+        top: 80px;
+        background: #fff;
+        border: 1px solid #e1e1e1;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 28px;
+        cursor: pointer;
+        z-index: 101;
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-toggle:hover {
+        background: #f5f5f5;
+    }
+    
+    .sidebar {
+        padding: 10px 0;
+        font-size: 16px;
+    }
+    
+    .sidebar-section {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+    }
+    
+    .sidebar-section:last-child {
+        border-bottom: none;
+    }
+    
+    .sidebar-header {
+        padding: 10px 15px;
+        font-weight: bold;
+        color: #346599;
+        background-color: #f8f8f8;
+        margin-bottom: 5px;
+    }
+
+    .sidebar-container.collapsed .sidebar-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: none;
+    }
+    
+    .sidebar-item {
+        padding: 8px 15px;
+        display: block;
+        color: #333;
+        text-decoration: none;
+    }
+    
+    .sidebar-item:hover {
+        background-color: #f0f0f0;
+        color: #d9534f;
+    }
+    
+    .sidebar-item .glyphicon {
+        margin-right: 8px;
+        color: #666;
+        font-size: 18px;
+    }
+    
+    /* 主內容區 */
+    .main-content {
+        margin-left: 180px;
+        padding: 15px;
+        width: calc(100% - 180px);
+        transition: margin-left 0.3s ease;
+    }
+    
+    /* 側邊欄收起時的主內容區樣式 */
+    .sidebar-container.collapsed + .main-content {
+        margin-left: 53px;
+        width: calc(100% - 53px);
+    }
+
+    .username {
+            font-weight: bold;
+            transition: color 0.2s ease;
+    }
+
+    .username.male {
+        color: #346599;  /* 男性藍色 */
+    }
+
+    .username.female {
+        color: #d9534f;  /* 女性紅色 */
+    }
+
+    .username:hover {
+        text-decoration: underline;
+    }   
+    
+
+    .circle {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .icon {
+      width: 50%;
+      height: 50%;
+      fill: #555;
+    }
+    
+    /* 響應式調整 */
+    @media (max-width: 1200px) {
+        .left-margin, .right-margin {
+            width: 15%;
+        }
+        .content-area {
+            width: 70%;
+        }
+        
+        .sidebar-container.collapsed ~ .left-margin {
+            width: calc(15% - 167px);
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .left-margin, .right-margin {
+            display: none;
+        }
+        .content-area {
+            width: 100%;
+        }
+        .sidebar-container {
+            position: fixed;
+            left: 0px;
+            z-index: 1000;
+            height: calc(100vh - 70px);
+        }
+        
+        .sidebar-container.collapsed ~ .left-margin {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .left-margin, .right-margin {
+            display: none;
+        }
+        .content-area {
+            width: 100%;
+        }
+        .sidebar-container {
+            position: fixed;
+            left: -220px;
+            z-index: 1000;
+            height: calc(100vh - 70px);
+        }
+        .sidebar-container.show {
+            left: 0;
+        }
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        .sidebar-container.collapsed {
+            left: -220px;
+        }
+        .sidebar-container.collapsed.show {
+            left: 0;
+            width: 220px;
+        }
+    }
+
+    .message-badge {
+        position: absolute;
+        top: 10px;
+        right: -5px;
+        background-color: #d9534f;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .message-dropdown {
+        position: relative;
+    }
+    
+    .unread-message {
+        background-color: #f8f9fa;
+        border-left: 3px solid #d9534f;
+    }
+    
+    body.dark-mode .unread-message {
+        background-color: #2a2a2a;
+        border-left: 3px solid #ff6b6b;
+    }
+    
+    .message-time {
+        font-size: 12px;
+        color: #6c757d;
+    }
+    
+    body.dark-mode .message-time {
+        color: #aaa;
+    }
+
+    /* 按鈕樣式 */
+    .btn-default {
+        background-color: #f8f9fa;
+        border-color: #ddd;
+        color: #333;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-default:hover {
+        background-color: #e9ecef;
+        border-color: #ccc;
+        color: #333;
+    }
+    
+    .btn-default:active {
+        background-color: #e2e6ea;
+        border-color: #dae0e5;
+        box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    }
+    
+    .btn-primary {
+        background-color: #346599;
+        border-color: #2c577f;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2c577f;
+        border-color: #254a6a;
+    }
+    
+    .btn-primary:active {
+        background-color: #254a6a;
+        border-color: #1e3c55;
+        box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    }
+
+</style>
+{% endblock styles %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                
+                <div class="navbar-brand-container" style="display: flex; align-items: center; padding-left: 0;">
+                    <button id="desktopSidebarToggle" class="btn btn-link navbar-btn visible-lg visible-md visible-sm" style="padding: 15px 10px; margin-right: 5px; color:#fff;">
+                        <span class="glyphicon glyphicon-menu-hamburger" style="font-size: 18px;"></span>
+                    </button>
+                    
+                    <a class="navbar-brand" href="{{ url_for('index') }}" style="padding: 10px 15px; height: auto;">
+                        <img src="{{ url_for('static', filename='images/icon.png') }}" alt="高登討論區" style="height:28px; display: inline-block; vertical-align: middle;">
+                    </a>
+                </div>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <form class="navbar-form navbar-left" role="search" action="{{ url_for('search') }}" method="get" style="flex: 1; min-width: 0;">
+                    <div class="form-group" style="display: flex; align-items: center; margin: 10px 0; flex-wrap: nowrap; width: 100%;">
+                        <select class="form-control" name="type" style="width: 100px; min-width: 100px;">
+                            <option value="posts">貼文</option>
+                            <option value="users">作者</option>
+                        </select>
+                        <input type="text" class="form-control" name="q" placeholder="搜尋..." style="flex: 1; min-width: 270px; margin-left: 5px;">
+                        <button type="submit" class="btn btn-default" style="margin-left: 5px;">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </div>
+                </form>
+                <ul class="nav navbar-nav navbar-right" style="display: flex; align-items: center; flex-wrap: nowrap; margin-left: auto;">
+                    {% if current_user.is_anonymous %}
+                        <li><a href="{{ url_for('login') }}">登入</a></li>
+                        <li><a href="{{ url_for('register') }}">註冊</a></li>
+                    {% else %}
+                        <!-- 新增訊息下拉選單 -->
+                        <li class="dropdown message-dropdown" style="white-space: nowrap;">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-envelope" style="font-size: 20px; margin-top: 8px;"></span>
+                                {% set new_messages = current_user.new_messages() %}
+                                {% if new_messages %}
+                                <span class="message-badge">{{ new_messages }}</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-header">私人訊息</li>
+                                <li><a href="{{ url_for('messages') }}">我的信箱</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li class="dropdown-header">快速查看</li>
+                                {% for message in current_user.recent_messages(3) %}
+                                <li>
+                                    <a href="{{ url_for('messages') }}">
+                                        <strong>{{ message.sender.username }}</strong>
+                                        <small class="message-time"><span class="moment-time" data-timestamp="{{ message.timestamp }}"></span></small>
+                                        <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ message.body[:30] }}{% if message.body|length > 30 %}...{% endif %}</div>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        
+                        <li class="dropdown" style="white-space: nowrap;">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <div class="circle">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+                                    </svg>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><div style="padding: 10px 15px;color:#353535"><span class="glyphicon glyphicon-user"></span>&emsp;{{ current_user.username }}</div></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('user', username=current_user.username) }}">我的帳戶</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('my_bookmarks') }}">留名</a></li>
+                                <li><a href="{{ url_for('my_history') }}">回帶</a></li>
+                                <li>
+                                    <a href="#" id="darkModeToggle">
+                                        <span class="glyphicon glyphicon-adjust"></span> 
+                                        <span id="darkModeText">黑暗模式</span>
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('logout') }}">登出</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock navbar %}
+
+{% block content %}
+    <div class="layout-container">
+        <!-- 左側空白區域 -->
+        <div class="left-margin"></div>
+        
+        <!-- 中間內容區域 -->
+        <div class="content-area">
+            <!-- 側邊欄 -->
+            <div class="sidebar-container" id="sidebarContainer">
+                <div class="sidebar" id="sidebar">
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">個人</div>
+                        <a href="{{ url_for('my_history') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-time"></span>&emsp;&nbsp;回帶
+                        </a>
+                        <a href="{{ url_for('my_bookmarks') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-bookmark"></span>&emsp;&nbsp;留名
+                        </a>
+                    </div>
+                    
+                    <!-- 分類導航 -->
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">推薦</div>
+                        <a href="{{ url_for('category', category='吹水台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-comment"></span>&emsp;&nbsp;吹水台
+                        </a>
+                        <a href="{{ url_for('category', category='高登熱') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-fire"></span>&emsp;&nbsp;高登熱
+                        </a>
+                        <a href="{{ url_for('category', category='時事台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-globe"></span>&emsp;&nbsp;時事台
+                        </a>
+                        <a href="{{ url_for('category', category='娛樂台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-film"></span>&emsp;&nbsp;娛樂台
+                        </a>
+                        <a href="{{ url_for('category', category='財經台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-signal"></span>&emsp;&nbsp;財經台
+                        </a>
+                        <a href="{{ url_for('category', category='學術台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-education"></span>&emsp;&nbsp;學術台
+                        </a>
+                        <a href="{{ url_for('category', category='攝影台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-camera"></span>&emsp;&nbsp;攝影台
+                        </a>
+                        <a href="{{ url_for('category', category='遊戲台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-screenshot"></span>&emsp;&nbsp;遊戲台
+                        </a>
+                        <a href="{{ url_for('category', category='音樂台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-music"></span>&emsp;&nbsp;音樂台
+                        </a>
+                        <a href="{{ url_for('category', category='體育台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-star"></span>&emsp;&nbsp;體育台
+                        </a>
+                        <a href="{{ url_for('category', category='講故台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-book"></span>&emsp;&nbsp;講故台
+                        </a>
+                        <a href="{{ url_for('category', category='創意台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-info-sign"></span>&emsp;&nbsp;創意台
+                        </a>
+                        <a href="{{ url_for('category', category='超自然台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-eye-open"></span>&emsp;&nbsp;超自然台
+                        </a>
+                        <a href="{{ url_for('category', category='優惠台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-tag"></span>&emsp;&nbsp;優惠台
+                        </a>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">科技</div>
+                        <a href="{{ url_for('category', category='硬件台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-hdd"></span>&emsp;&nbsp;硬件台
+                        </a>
+                        <a href="{{ url_for('category', category='電訊台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-flash"></span>&emsp;&nbsp;電訊台
+                        </a>
+                        <a href="{{ url_for('category', category='軟件台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-cd"></span>&emsp;&nbsp;軟件台
+                        </a>
+                        <a href="{{ url_for('category', category='手機台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-phone"></span>&emsp;&nbsp;手機台
+                        </a>
+                        <a href="{{ url_for('category', category='應用程式台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-apple"></span>&emsp;&nbsp;應用程式台
+                        </a>
+                        <a href="{{ url_for('category', category='加密貨幣台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-bitcoin"></span>&emsp;&nbsp;加密貨幣台
+                        </a>
+                        <a href="{{ url_for('category', category='AI技術台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-cog"></span>&emsp;&nbsp;AI技術台
+                        </a>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">生活</div>
+                        <a href="{{ url_for('category', category='上班台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-briefcase"></span>&emsp;&nbsp;上班台
+                        </a>
+                        <a href="{{ url_for('category', category='感情台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-heart"></span>&emsp;&nbsp;感情台
+                        </a>
+                        <a href="{{ url_for('category', category='校園台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-grain"></span>&emsp;&nbsp;校園台
+                        </a>
+                        <a href="{{ url_for('category', category='親子台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-user"></span>&emsp;&nbsp;親子台
+                        </a>
+                        <a href="{{ url_for('category', category='寵物台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-heart-empty"></span>&emsp;&nbsp;寵物台
+                        </a>
+                        <a href="{{ url_for('category', category='健康台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-plus-sign"></span>&emsp;&nbsp;健康台
+                        </a>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">其他</div>
+                        <a href="{{ url_for('category', category='站務台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-wrench"></span>&emsp;&nbsp;站務台
+                        </a>
+                        <a href="{{ url_for('category', category='電台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-headphones"></span>&emsp;&nbsp;電&emsp;台
+                        </a>
+                        <a href="{{ url_for('category', category='活動台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-calendar"></span>&emsp;&nbsp;活動台
+                        </a>
+                        <a href="{{ url_for('category', category='買賣台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-shopping-cart"></span>&emsp;&nbsp;買賣台
+                        </a>
+                        <a href="{{ url_for('category', category='直播台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-facetime-video"></span>&emsp;&nbsp;直播台
+                        </a>
+                        <a href="{{ url_for('category', category='成人台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-exclamation-sign"></span>&emsp;&nbsp;成人台
+                        </a>
+                    </div>
+                    <div class="sidebar-section">
+                        {% if current_user.is_anonymous %}
+                        <div class="sidebar-header" style="margin-left: -10px;">訪客</div>
+                        <a href="{{ url_for('login') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-log-in"></span>&emsp;&nbsp;登入
+                        </a>
+                        <a href="{{ url_for('register') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-list-alt"></span>&emsp;&nbsp;註冊
+                        {% else %}    
+                        <div class="sidebar-header" style="margin-left: -10px;">用戶</div>
+                        <a href="{{ url_for('user', username=current_user.username) }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-user"></span>&emsp;&nbsp;我的帳戶
+                        </a>
+                        <a href="{{ url_for('messages') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-envelope"></span>&emsp;&nbsp;我的信箱
+                        </a>
+
+                        <a href="{{ url_for('logout') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-log-out"></span>&emsp;&nbsp;登出
+                        </a>
+                        {% endif %}
+                        <a href="#" id="sidebarDarkModeToggle" class="sidebar-item">
+                            <span class="glyphicon glyphicon-adjust"></span>&emsp;&nbsp;<span id="sidebarDarkModeText">黑暗模式</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 主內容區 -->
+            <div class="main-content" id="mainContent">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% block app_content %}{% endblock %}
+            </div>
+        </div>
+        
+        <!-- 右側空白區域 -->
+        <div class="right-margin"></div>
+    </div>
+    
+    <!-- 頁腳 -->
+    <footer class="footer" style="margin-top: 20px; padding: 20px 0; border-top: 1px solid #e7e7e7;">
+        <div class="container text-center">
+            <p class="text-muted">© 2025 香港高登討論區 - 如有雷同 純屬抄襲</p>
+        </div>
+    </footer>
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang(g.locale) }}
+
+<script>
+    $(document).ready(function() {
+        // 檢查cookie設置黑暗模式
+        function checkDarkMode() {
+            if (document.cookie.split(';').some((item) => item.trim().startsWith('darkMode='))) {
+                var darkMode = document.cookie.replace(/(?:(?:^|.*;\s*)darkMode\s*\=\s*([^;]*).*$)|^.*$/, "$1") === 'true';
+                if (darkMode) {
+                    $('body').addClass('dark-mode');
+                    $('#darkModeText, #sidebarDarkModeText').text('明亮模式');
+                } else {
+                    $('body').removeClass('dark-mode');
+                    $('#darkModeText, #sidebarDarkModeText').text('黑暗模式');
+                }
+            }
+        }
+
+        // 初始化檢查
+        checkDarkMode();
+
+        // 黑暗模式切換 - 處理兩個按鈕
+        $('#darkModeToggle, #sidebarDarkModeToggle').click(function(e) {
+            e.preventDefault();
+            $('body').toggleClass('dark-mode');
+            
+            var isDarkMode = $('body').hasClass('dark-mode');
+            if (isDarkMode) {
+                $('#darkModeText, #sidebarDarkModeText').text('明亮模式');
+            } else {
+                $('#darkModeText, #sidebarDarkModeText').text('黑暗模式');
+            }
+            
+            // 設置cookie，有效期30天
+            var date = new Date();
+            date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+            document.cookie = `darkMode=${isDarkMode}; expires=${date.toUTCString()}; path=/`;
+        });
+
+        // 桌面版側邊欄收放功能
+        $('#desktopSidebarToggle').click(function(e) {
+            e.preventDefault();
+            $('#sidebarContainer').toggleClass('collapsed');
+        });
+        
+        // 移動設備側邊欄切換
+        $('.navbar-toggle').click(function(e) {
+            e.stopPropagation(); // 防止事件冒泡
+            $('#sidebarContainer').toggleClass('show');
+        });
+        
+        // 點擊主內容區關閉移動端側邊欄
+        $('.main-content').click(function() {
+            if ($(window).width() <= 768 && $('#sidebarContainer').hasClass('show')) {
+                $('#sidebarContainer').removeClass('show');
+            }
+        });
+        
+        // 設置 moment.js 為中文
+        moment.locale('zh-tw', {
+            relativeTime: {
+                future: '%s內',
+                past: '%s前',
+                s: '幾秒',
+                m: '1分鐘',
+                mm: '%d分鐘',
+                h: '1小時',
+                hh: '%d小時',
+                d: '1天',
+                dd: '%d天',
+                M: '1個月',
+                MM: '%d個月',
+                y: '1年',
+                yy: '%d年'
+            },
+            months: '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
+            monthsShort: '1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月'.split('_'),
+            weekdays: '星期日_星期一_星期二_星期三_星期四_星期五_星期六'.split('_'),
+            weekdaysShort: '週日_週一_週二_週三_週四_週五_週六'.split('_'),
+            weekdaysMin: '日_一_二_三_四_五_六'.split('_')
+        });
+    });
+    
+    // 處理窗口大小變化
+    $(window).resize(function() {
+        if ($(window).width() > 768) {
+            $('#sidebarContainer').removeClass('show');
+        }
+    });
+
+    // 封鎖內容切換功能
+    function toggleBlockedContent(element) {
+        const content = element.parentElement.querySelector('.blocked-body');
+        const chevron = element.querySelector('.glyphicon-chevron-down');
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            chevron.classList.remove('glyphicon-chevron-down');
+            chevron.classList.add('glyphicon-chevron-up');
+        } else {
+            content.style.display = 'none';
+            chevron.classList.remove('glyphicon-chevron-up');
+            chevron.classList.add('glyphicon-chevron-down');
+        }
+    }
+</script>
+{% endblock scripts %}Fang TC", "Helvetica Neue", Arial, sans-serif;
+        padding-top: 70px;
+        margin: 0;
+        overflow-x: hidden;
+    }
+    
+    /* Dark mode styles */
+    body.dark-mode {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .navbar-default {
+        background-color: #1e1e1e !important;
+        border-color: #1e1e1e !important;
+    }
+    
+    body.dark-mode .navbar-default .navbar-nav > li > a {
+        color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .left-margin,
+    body.dark-mode .right-margin {
+        background-color: #1e1e1e;
+    }
+    
+    /* 修正 sidebar 黑暗模式樣式 */
+    body.dark-mode .sidebar-container {
+        background-color: #1e1e1e !important;
+        border-right-color: #333 !important;
+    }
+    
+    body.dark-mode .sidebar-header {
+        background-color: #2d2d2d !important;
+        color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .sidebar-item {
+        color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .sidebar-item:hover {
+        background-color: #333 !important;
+        color: #d9534f !important;
+    }
+    
+    body.dark-mode .sidebar-item .glyphicon {
+        color: #aaa !important;
+    }
+    
+    body.dark-mode .main-content {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .topic-card {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+    
+    body.dark-mode .topic-title {
+        color: #e0e0e0;
+    }
+
+    .blocked-header {
+        background-color: #f8f8f8;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 15px;
+    }
+
+    .blocked-header:hover {
+        background-color: #f0f0f0;
+    }
+
+    .blocked-content .panel-body {
+        padding: 0;
+    }
+
+    body.dark-mode .blocked-header {
+        background-color: #333;
+        border-color: #444;
+    }
+
+    body.dark-mode .blocked-header:hover {
+        background-color: #3a3a3a;
+    }
+
+    /* 整體佈局容器 */
+    .layout-container {
+        display: flex;
+        min-height: calc(100vh - 70px);
+    }
+    
+    /* 左側空白區域 */
+    .left-margin {
+        display: none;
+    }
+    
+    /* 中間內容區域 */
+    .content-area {
+        width: 100%;
+        display: flex;
+        position: relative;
+    }
+    
+    /* 右側空白區域 */
+    .right-margin {
+        display: none;
+    }
+    
+    /* 導航欄樣式 */
+    .navbar-default {
+        background-color: #346599 !important;
+        border-color: #346599 !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .navbar-default .navbar-nav > li > a {
+        color: #fff !important;
+    }
+    
+    .navbar-default .navbar-nav > li > a:hover {
+        color: #141414 !important;
+    }
+    
+    /* 左側目錄樣式 - 固定位置 */
+    .sidebar-container {
+        position: fixed;
+        left: 0;
+        top: 70px;
+        bottom: 0;
+        width: 180px;
+        background-color: #f5f5f5;
+        border-right: 1px solid #e1e1e1;
+        box-shadow: 1px 0 3px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        z-index: 100;
+        overflow-y: auto;
+    }
+    
+    .sidebar-container.collapsed {
+        width: 53px;
+        overflow: hidden;
+        font-size: 16px;
+    }
+    
+    /* 側邊欄收起時調整左側空白區域 */
+    .sidebar-container.collapsed ~ .left-margin {
+        width: calc(20% - 167px);
+    }
+    
+    .sidebar-toggle {
+        position: fixed;
+        right: -15px;
+        top: 80px;
+        background: #fff;
+        border: 1px solid #e1e1e1;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 28px;
+        cursor: pointer;
+        z-index: 101;
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-toggle:hover {
+        background: #f5f5f5;
+    }
+    
+    .sidebar {
+        padding: 10px 0;
+        font-size: 16px;
+    }
+    
+    .sidebar-section {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+    }
+    
+    .sidebar-section:last-child {
+        border-bottom: none;
+    }
+    
+    .sidebar-header {
+        padding: 10px 15px;
+        font-weight: bold;
+        color: #346599;
+        background-color: #f8f8f8;
+        margin-bottom: 5px;
+    }
+
+    .sidebar-container.collapsed .sidebar-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: none;
+    }
+    
+    .sidebar-item {
+        padding: 8px 15px;
+        display: block;
+        color: #333;
+        text-decoration: none;
+    }
+    
+    .sidebar-item:hover {
+        background-color: #f0f0f0;
+        color: #d9534f;
+    }
+    
+    .sidebar-item .glyphicon {
+        margin-right: 8px;
+        color: #666;
+        font-size: 18px;
+    }
+    
+    /* 主內容區 */
+    .main-content {
+        margin-left: 180px;
+        padding: 15px;
+        width: calc(100% - 180px);
+        transition: margin-left 0.3s ease;
+    }
+    
+    /* 側邊欄收起時的主內容區樣式 */
+    .sidebar-container.collapsed + .main-content {
+        margin-left: 53px;
+        width: calc(100% - 53px);
+    }
+
+    .username {
+            font-weight: bold;
+            transition: color 0.2s ease;
+    }
+
+    .username.male {
+        color: #346599;  /* 男性藍色 */
+    }
+
+    .username.female {
+        color: #d9534f;  /* 女性紅色 */
+    }
+
+    .username:hover {
+        text-decoration: underline;
+    }   
+    
+
+    .circle {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .icon {
+      width: 50%;
+      height: 50%;
+      fill: #555;
+    }
+    
+    /* 響應式調整 */
+    @media (max-width: 1200px) {
+        .left-margin, .right-margin {
+            width: 15%;
+        }
+        .content-area {
+            width: 70%;
+        }
+        
+        .sidebar-container.collapsed ~ .left-margin {
+            width: calc(15% - 167px);
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .left-margin, .right-margin {
+            display: none;
+        }
+        .content-area {
+            width: 100%;
+        }
+        .sidebar-container {
+            position: fixed;
+            left: 0px;
+            z-index: 1000;
+            height: calc(100vh - 70px);
+        }
+        
+        .sidebar-container.collapsed ~ .left-margin {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .left-margin, .right-margin {
+            display: none;
+        }
+        .content-area {
+            width: 100%;
+        }
+        .sidebar-container {
+            position: fixed;
+            left: -220px;
+            z-index: 1000;
+            height: calc(100vh - 70px);
+        }
+        .sidebar-container.show {
+            left: 0;
+        }
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        .sidebar-container.collapsed {
+            left: -220px;
+        }
+        .sidebar-container.collapsed.show {
+            left: 0;
+            width: 220px;
+        }
+    }
+
+    .message-badge {
+        position: absolute;
+        top: 10px;
+        right: -5px;
+        background-color: #d9534f;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .message-dropdown {
+        position: relative;
+    }
+    
+    .unread-message {
+        background-color: #f8f9fa;
+        border-left: 3px solid #d9534f;
+    }
+    
+    body.dark-mode .unread-message {
+        background-color: #2a2a2a;
+        border-left: 3px solid #ff6b6b;
+    }
+    
+    .message-time {
+        font-size: 12px;
+        color: #6c757d;
+    }
+    
+    body.dark-mode .message-time {
+        color: #aaa;
+    }
+
+    /* 按鈕樣式 */
+    .btn-default {
+        background-color: #f8f9fa;
+        border-color: #ddd;
+        color: #333;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-default:hover {
+        background-color: #e9ecef;
+        border-color: #ccc;
+        color: #333;
+    }
+    
+    .btn-default:active {
+        background-color: #e2e6ea;
+        border-color: #dae0e5;
+        box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    }
+    
+    .btn-primary {
+        background-color: #346599;
+        border-color: #2c577f;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2c577f;
+        border-color: #254a6a;
+    }
+    
+    .btn-primary:active {
+        background-color: #254a6a;
+        border-color: #1e3c55;
+        box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    }
+
+</style>
+{% endblock styles %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                
+                <div class="navbar-brand-container" style="display: flex; align-items: center; padding-left: 0;">
+                    <button id="desktopSidebarToggle" class="btn btn-link navbar-btn visible-lg visible-md visible-sm" style="padding: 15px 10px; margin-right: 5px; color:#fff;">
+                        <span class="glyphicon glyphicon-menu-hamburger" style="font-size: 18px;"></span>
+                    </button>
+                    
+                    <a class="navbar-brand" href="{{ url_for('index') }}" style="padding: 10px 15px; height: auto;">
+                        <img src="{{ url_for('static', filename='images/icon.png') }}" alt="高登討論區" style="height:28px; display: inline-block; vertical-align: middle;">
+                    </a>
+                </div>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <form class="navbar-form navbar-left" role="search" action="{{ url_for('search') }}" method="get" style="flex: 1; min-width: 0;">
+                    <div class="form-group" style="display: flex; align-items: center; margin: 10px 0; flex-wrap: nowrap; width: 100%;">
+                        <select class="form-control" name="type" style="width: 100px; min-width: 100px;">
+                            <option value="posts">貼文</option>
+                            <option value="users">作者</option>
+                        </select>
+                        <input type="text" class="form-control" name="q" placeholder="搜尋..." style="flex: 1; min-width: 270px; margin-left: 5px;">
+                        <button type="submit" class="btn btn-default" style="margin-left: 5px;">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </div>
+                </form>
+                <ul class="nav navbar-nav navbar-right" style="display: flex; align-items: center; flex-wrap: nowrap; margin-left: auto;">
+                    {% if current_user.is_anonymous %}
+                        <li><a href="{{ url_for('login') }}">登入</a></li>
+                        <li><a href="{{ url_for('register') }}">註冊</a></li>
+                    {% else %}
+                        <!-- 新增訊息下拉選單 -->
+                        <li class="dropdown message-dropdown" style="white-space: nowrap;">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-envelope" style="font-size: 20px; margin-top: 8px;"></span>
+                                {% set new_messages = current_user.new_messages() %}
+                                {% if new_messages %}
+                                <span class="message-badge">{{ new_messages }}</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-header">私人訊息</li>
+                                <li><a href="{{ url_for('messages') }}">我的信箱</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li class="dropdown-header">快速查看</li>
+                                {% for message in current_user.recent_messages(3) %}
+                                <li>
+                                    <a href="{{ url_for('messages') }}">
+                                        <strong>{{ message.sender.username }}</strong>
+                                        <small class="message-time"><span class="moment-time" data-timestamp="{{ message.timestamp }}"></span></small>
+                                        <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ message.body[:30] }}{% if message.body|length > 30 %}...{% endif %}</div>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        
+                        <li class="dropdown" style="white-space: nowrap;">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <div class="circle">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+                                    </svg>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><div style="padding: 10px 15px;color:#353535"><span class="glyphicon glyphicon-user"></span>&emsp;{{ current_user.username }}</div></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('user', username=current_user.username) }}">我的帳戶</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('my_bookmarks') }}">留名</a></li>
+                                <li><a href="{{ url_for('my_history') }}">回帶</a></li>
+                                <li>
+                                    <a href="#" id="darkModeToggle">
+                                        <span class="glyphicon glyphicon-adjust"></span> 
+                                        <span id="darkModeText">黑暗模式</span>
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('logout') }}">登出</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock navbar %}
+
+{% block content %}
+    <div class="layout-container">
+        <!-- 左側空白區域 -->
+        <div class="left-margin"></div>
+        
+        <!-- 中間內容區域 -->
+        <div class="content-area">
+            <!-- 側邊欄 -->
+            <div class="sidebar-container" id="sidebarContainer">
+                <div class="sidebar" id="sidebar">
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">個人</div>
+                        <a href="{{ url_for('my_history') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-time"></span>&emsp;&nbsp;回帶
+                        </a>
+                        <a href="{{ url_for('my_bookmarks') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-bookmark"></span>&emsp;&nbsp;留名
+                        </a>
+                    </div>
+                    
+                    <!-- 分類導航 -->
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">推薦</div>
+                        <a href="{{ url_for('category', category='吹水台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-comment"></span>&emsp;&nbsp;吹水台
+                        </a>
+                        <a href="{{ url_for('category', category='高登熱') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-fire"></span>&emsp;&nbsp;高登熱
+                        </a>
+                        <a href="{{ url_for('category', category='時事台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-globe"></span>&emsp;&nbsp;時事台
+                        </a>
+                        <a href="{{ url_for('category', category='娛樂台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-film"></span>&emsp;&nbsp;娛樂台
+                        </a>
+                        <a href="{{ url_for('category', category='財經台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-signal"></span>&emsp;&nbsp;財經台
+                        </a>
+                        <a href="{{ url_for('category', category='學術台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-education"></span>&emsp;&nbsp;學術台
+                        </a>
+                        <a href="{{ url_for('category', category='攝影台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-camera"></span>&emsp;&nbsp;攝影台
+                        </a>
+                        <a href="{{ url_for('category', category='遊戲台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-screenshot"></span>&emsp;&nbsp;遊戲台
+                        </a>
+                        <a href="{{ url_for('category', category='音樂台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-music"></span>&emsp;&nbsp;音樂台
+                        </a>
+                        <a href="{{ url_for('category', category='體育台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-star"></span>&emsp;&nbsp;體育台
+                        </a>
+                        <a href="{{ url_for('category', category='講故台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-book"></span>&emsp;&nbsp;講故台
+                        </a>
+                        <a href="{{ url_for('category', category='創意台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-info-sign"></span>&emsp;&nbsp;創意台
+                        </a>
+                        <a href="{{ url_for('category', category='超自然台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-eye-open"></span>&emsp;&nbsp;超自然台
+                        </a>
+                        <a href="{{ url_for('category', category='優惠台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-tag"></span>&emsp;&nbsp;優惠台
+                        </a>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">科技</div>
+                        <a href="{{ url_for('category', category='硬件台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-hdd"></span>&emsp;&nbsp;硬件台
+                        </a>
+                        <a href="{{ url_for('category', category='電訊台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-flash"></span>&emsp;&nbsp;電訊台
+                        </a>
+                        <a href="{{ url_for('category', category='軟件台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-cd"></span>&emsp;&nbsp;軟件台
+                        </a>
+                        <a href="{{ url_for('category', category='手機台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-phone"></span>&emsp;&nbsp;手機台
+                        </a>
+                        <a href="{{ url_for('category', category='應用程式台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-apple"></span>&emsp;&nbsp;應用程式台
+                        </a>
+                        <a href="{{ url_for('category', category='加密貨幣台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-bitcoin"></span>&emsp;&nbsp;加密貨幣台
+                        </a>
+                        <a href="{{ url_for('category', category='AI技術台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-cog"></span>&emsp;&nbsp;AI技術台
+                        </a>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">生活</div>
+                        <a href="{{ url_for('category', category='上班台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-briefcase"></span>&emsp;&nbsp;上班台
+                        </a>
+                        <a href="{{ url_for('category', category='感情台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-heart"></span>&emsp;&nbsp;感情台
+                        </a>
+                        <a href="{{ url_for('category', category='校園台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-grain"></span>&emsp;&nbsp;校園台
+                        </a>
+                        <a href="{{ url_for('category', category='親子台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-user"></span>&emsp;&nbsp;親子台
+                        </a>
+                        <a href="{{ url_for('category', category='寵物台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-heart-empty"></span>&emsp;&nbsp;寵物台
+                        </a>
+                        <a href="{{ url_for('category', category='健康台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-plus-sign"></span>&emsp;&nbsp;健康台
+                        </a>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <div class="sidebar-header" style="margin-left: -10px;">其他</div>
+                        <a href="{{ url_for('category', category='站務台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-wrench"></span>&emsp;&nbsp;站務台
+                        </a>
+                        <a href="{{ url_for('category', category='電台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-headphones"></span>&emsp;&nbsp;電&emsp;台
+                        </a>
+                        <a href="{{ url_for('category', category='活動台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-calendar"></span>&emsp;&nbsp;活動台
+                        </a>
+                        <a href="{{ url_for('category', category='買賣台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-shopping-cart"></span>&emsp;&nbsp;買賣台
+                        </a>
+                        <a href="{{ url_for('category', category='直播台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-facetime-video"></span>&emsp;&nbsp;直播台
+                        </a>
+                        <a href="{{ url_for('category', category='成人台') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-exclamation-sign"></span>&emsp;&nbsp;成人台
+                        </a>
+                    </div>
+                    <div class="sidebar-section">
+                        {% if current_user.is_anonymous %}
+                        <div class="sidebar-header" style="margin-left: -10px;">訪客</div>
+                        <a href="{{ url_for('login') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-log-in"></span>&emsp;&nbsp;登入
+                        </a>
+                        <a href="{{ url_for('register') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-list-alt"></span>&emsp;&nbsp;註冊
+                        {% else %}    
+                        <div class="sidebar-header" style="margin-left: -10px;">用戶</div>
+                        <a href="{{ url_for('user', username=current_user.username) }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-user"></span>&emsp;&nbsp;我的帳戶
+                        </a>
+                        <a href="{{ url_for('messages') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-envelope"></span>&emsp;&nbsp;我的信箱
+                        </a>
+
+                        <a href="{{ url_for('logout') }}" class="sidebar-item">
+                            <span class="glyphicon glyphicon-log-out"></span>&emsp;&nbsp;登出
+                        </a>
+                        {% endif %}
+                        <a href="#" id="sidebarDarkModeToggle" class="sidebar-item">
+                            <span class="glyphicon glyphicon-adjust"></span>&emsp;&nbsp;<span id="sidebarDarkModeText">黑暗模式</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 主內容區 -->
+            <div class="main-content" id="mainContent">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% block app_content %}{% endblock %}
+            </div>
+        </div>
+        
+        <!-- 右側空白區域 -->
+        <div class="right-margin"></div>
+    </div>
+    
+    <!-- 頁腳 -->
+    <footer class="footer" style="margin-top: 20px; padding: 20px 0; border-top: 1px solid #e7e7e7;">
+        <div class="container text-center">
+            <p class="text-muted">© 2025 香港高登討論區 - 如有雷同 純屬抄襲</p>
+        </div>
+    </footer>
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang(g.locale) }}
+
+<script>
+    $(document).ready(function() {
+        // 檢查cookie設置黑暗模式
+        function checkDarkMode() {
+            if (document.cookie.split(';').some((item) => item.trim().startsWith('darkMode='))) {
+                var darkMode = document.cookie.replace(/(?:(?:^|.*;\s*)darkMode\s*\=\s*([^;]*).*$)|^.*$/, "$1") === 'true';
+                if (darkMode) {
+                    $('body').addClass('dark-mode');
+                    $('#darkModeText, #sidebarDarkModeText').text('明亮模式');
+                } else {
+                    $('body').removeClass('dark-mode');
+                    $('#darkModeText, #sidebarDarkModeText').text('黑暗模式');
+                }
+            }
+        }
+
+        // 初始化檢查
+        checkDarkMode();
+
+        // 黑暗模式切換 - 處理兩個按鈕
+        $('#darkModeToggle, #sidebarDarkModeToggle').click(function(e) {
+            e.preventDefault();
+            $('body').toggleClass('dark-mode');
+            
+            var isDarkMode = $('body').hasClass('dark-mode');
+            if (isDarkMode) {
+                $('#darkModeText, #sidebarDarkModeText').text('明亮模式');
+            } else {
+                $('#darkModeText, #sidebarDarkModeText').text('黑暗模式');
+            }
+            
+            // 設置cookie，有效期30天
+            var date = new Date();
+            date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+            document.cookie = `darkMode=${isDarkMode}; expires=${date.toUTCString()}; path=/`;
+        });
+
+        // 桌面版側邊欄收放功能
+        $('#desktopSidebarToggle').click(function(e) {
+            e.preventDefault();
+            $('#sidebarContainer').toggleClass('collapsed');
+        });
+        
+        // 移動設備側邊欄切換
+        $('.navbar-toggle').click(function(e) {
+            e.stopPropagation(); // 防止事件冒泡
+            $('#sidebarContainer').toggleClass('show');
+        });
+        
+        // 點擊主內容區關閉移動端側邊欄
+        $('.main-content').click(function() {
+            if ($(window).width() <= 768 && $('#sidebarContainer').hasClass('show')) {
+                $('#sidebarContainer').removeClass('show');
+            }
+        });
+        
+        // 設置 moment.js 為中文
+        moment.locale('zh-tw', {
+            relativeTime: {
+                future: '%s內',
+                past: '%s前',
+                s: '幾秒',
+                m: '1分鐘',
+                mm: '%d分鐘',
+                h: '1小時',
+                hh: '%d小時',
+                d: '1天',
+                dd: '%d天',
+                M: '1個月',
+                MM: '%d個月',
+                y: '1年',
+                yy: '%d年'
+            },
+            months: '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
+            monthsShort: '1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月'.split('_'),
+            weekdays: '星期日_星期一_星期二_星期三_星期四_星期五_星期六'.split('_'),
+            weekdaysShort: '週日_週一_週二_週三_週四_週五_週六'.split('_'),
+            weekdaysMin: '日_一_二_三_四_五_六'.split('_')
+        });
+    });
+    
+    // 處理窗口大小變化
+    $(window).resize(function() {
+        if ($(window).width() > 768) {
+            $('#sidebarContainer').removeClass('show');
+        }
+    });
+
+    // 封鎖內容切換功能
+    function toggleBlockedContent(element) {
+        const content = element.parentElement.querySelector('.blocked-body');
+        const chevron = element.querySelector('.glyphicon-chevron-down');
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            chevron.classList.remove('glyphicon-chevron-down');
+            chevron.classList.add('glyphicon-chevron-up');
+        } else {
+            content.style.display = 'none';
+            chevron.classList.remove('glyphicon-chevron-up');
+            chevron.classList.add('glyphicon-chevron-down');
+        }
+    }
+</script>
+{% endblock scripts %}

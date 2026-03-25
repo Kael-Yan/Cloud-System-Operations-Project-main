@@ -1,0 +1,123 @@
+{% extends "base.html.j2" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .username-feedback {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    
+    .is-valid {
+        border-color: #28a745 !important;
+    }
+    
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+    <div class="table" style="margin-left: 60px;
+        padding: 15px;
+        width: calc(100% - 20px);
+        transition: margin-left 0.3s ease";>
+    <h1>{{ _('編輯個人資料') }}</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.username.label(class="control-label") }}
+                    {{ form.username(class="form-control", id="username-input") }}
+                    <div class="invalid-feedback username-feedback" id="username-feedback">
+                        {% for error in form.username.errors %}
+                            <div style="display: block;">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.about_me.label(class="control-label") }}
+                    {{ form.about_me(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const usernameInput = document.getElementById('username-input');
+    const usernameFeedback = document.getElementById('username-feedback');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    let usernameCheckTimeout = null;
+    let isUsernameAvailable = false;
+
+    // 檢查用戶名是否可用
+    function checkUsernameAvailability(username) {
+        if (username.length < 3) {
+            return; // 用戶名太短不檢查
+        }
+
+        fetch(`/api/check_username?username=${encodeURIComponent(username)}&current_user={{ current_user.username }}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.available) {
+                    usernameInput.classList.remove('is-invalid');
+                    usernameInput.classList.add('is-valid');
+                    usernameFeedback.textContent = '用戶名可用';
+                    usernameFeedback.style.color = 'green';
+                    isUsernameAvailable = true;
+                } else {
+                    usernameInput.classList.remove('is-valid');
+                    usernameInput.classList.add('is-invalid');
+                    usernameFeedback.textContent = '該用戶名已被使用';
+                    usernameFeedback.style.color = 'red';
+                    isUsernameAvailable = false;
+                }
+            })
+            .catch(error => {
+                console.error('檢查用戶名時出錯:', error);
+            });
+    }
+
+    // 用戶名輸入事件處理
+    usernameInput.addEventListener('input', function() {
+        clearTimeout(usernameCheckTimeout);
+        
+        if (this.value.length < 3) {
+            this.classList.remove('is-valid', 'is-invalid');
+            usernameFeedback.textContent = '';
+            return;
+        }
+
+        usernameCheckTimeout = setTimeout(() => {
+            checkUsernameAvailability(this.value);
+        }, 500); // 防抖處理，500毫秒後檢查
+    });
+
+    // 表單提交驗證
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!isUsernameAvailable && usernameInput.value !== '{{ current_user.username }}') {
+            event.preventDefault();
+            usernameInput.classList.add('is-invalid');
+            usernameFeedback.textContent = '請選擇一個可用的用戶名';
+            usernameFeedback.style.color = 'red';
+        }
+    });
+
+    // 初始檢查當前用戶名
+    if (usernameInput.value === '{{ current_user.username }}') {
+        isUsernameAvailable = true;
+    }
+});
+</script>
+{% endblock %}

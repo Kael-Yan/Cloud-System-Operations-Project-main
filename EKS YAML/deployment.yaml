@@ -1,0 +1,189 @@
+# dilwl-campus-4122-v1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dilwl-campus-4122-v1
+  labels:
+    app: dilwl-campus-4122
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dilwl-campus-4122
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: dilwl-campus-4122
+        version: v1
+    spec:
+      containers:
+      - name: dilwl-campus-4122
+        image: 971882029798.dkr.ecr.us-east-1.amazonaws.com/dilwl-campus-4122:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "250m" 
+        env:
+        - name: S3_BUCKET_NAME
+          value: "dilwl-4122-2403"
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_SECRET_ACCESS_KEY
+        - name: AWS_SESSION_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_SESSION_TOKEN
+        - name: ADMINS
+          value: "tszchen8@gmail.com"
+        - name: FLASK_APP
+          value: microblog.py
+        - name: FLASK_DEBUG
+          value: "0"
+        - name: AWS_DEFAULT_REGION
+          value: us-east-1
+        - name: MAIL_SERVER
+          value: smtp.gmail.com
+        - name: MAIL_PORT
+          value: "587"
+        - name: MAIL_USE_TLS
+          value: "true"
+        - name: MAIL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: dilwl-campus-4122-secret
+              key: MAIL_USERNAME
+        - name: SERVER_NAME
+          value: "a25eb1b9c599f466da64259b9ac764bf-1903501135.us-east-1.elb.amazonaws.com"
+        - name: MAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dilwl-campus-4122-secret
+              key: MAIL_PASSWORD
+        - name: MAIL_DEFAULT_SENDER
+          valueFrom:
+            secretKeyRef:
+              name: dilwl-campus-4122-secret
+              key: MAIL_DEFAULT_SENDER
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dilwl-campus-4122-secret
+              key: SECRET_KEY
+        envFrom:
+        - configMapRef:
+              name: dilwl-campus-4122-config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        imagePullPolicy: Always
+
+
+---
+# dilwl-campus-4122-v2
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dilwl-campus-4122-v2
+  labels:
+    app: dilwl-campus-4122
+    version: v2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dilwl-campus-4122
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: dilwl-campus-4122
+        version: v2
+    spec:
+      containers:
+      - name: dilwl-campus-4122
+        image: 971882029798.dkr.ecr.us-east-1.amazonaws.com/dilwl-campus-4122:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "250m" 
+        env:
+        - name: S3_BUCKET_NAME
+          value: "dilwl-4122-2403"
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_SECRET_ACCESS_KEY
+        - name: AWS_SESSION_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_SESSION_TOKEN
+        - name: ADMINS
+          value: "tszchen8@gmail.com"
+        - name: FLASK_APP
+          value: microblog.py
+        - name: FLASK_DEBUG
+          value: "0"
+        - name: AWS_DEFAULT_REGION
+          value: us-east-1
+        - name: MAIL_SERVER
+          value: smtp.gmail.com
+        - name: MAIL_PORT
+          value: "587"
+        - name: MAIL_USE_TLS
+          value: "true"
+        - name: MAIL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: dilwl-campus-4122-secret
+              key: MAIL_USERNAME
+        - name: SERVER_NAME
+          value: "a25eb1b9c599f466da64259b9ac764bf-1903501135.us-east-1.elb.amazonaws.com"
+        - name: MAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dilwl-campus-4122-secret
+              key: MAIL_PASSWORD
+        - name: MAIL_DEFAULT_SENDER
+          valueFrom:
+            secretKeyRef:
+              name: dilwl-campus-4122-secret
+              key: MAIL_DEFAULT_SENDER
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dilwl-campus-4122-secret
+              key: SECRET_KEY
+        envFrom:
+        - configMapRef:
+              name: dilwl-campus-4122-config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        imagePullPolicy: Always

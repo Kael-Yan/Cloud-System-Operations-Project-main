@@ -1,0 +1,34 @@
+{% extends "base.html.j2" %}
+
+{% block app_content %}
+<div class="container text-center mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="display-1 text-danger">500</h1>
+            <h2 class="mb-4">服務器錯誤</h2>
+            <p class="lead mb-5">抱歉，服務器出現了一些問題。我們的技術團隊已經收到通知，正在處理中。</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> 返回首頁
+                </a>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> 返回上一頁
+                </a>
+            </div>
+            <div class="mt-5">
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">您可以嘗試：</h4>
+                    <ul class="mb-0">
+                        <li>稍後再試</li>
+                        <li>清除瀏覽器緩存</li>
+                        <li>檢查您的網絡連接</li>
+                    </ul>
+                </div>
+                <p class="text-muted mt-3">
+                    如果問題持續存在，請稍後再試。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

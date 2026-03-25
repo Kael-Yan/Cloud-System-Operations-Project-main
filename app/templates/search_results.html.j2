@@ -1,0 +1,73 @@
+{% extends "base.html.j2" %}
+
+{% block app_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>搜尋結果: "{{ query }}"</h2>
+            <p>搜尋類型: {{ '貼文' if search_type == 'posts' else '用戶' }}</p>
+            
+            {% if search_type == 'posts' %}
+                {% if results %}
+                    <div class="list-group">
+                        {% for post in results %}
+                            <a href="{{ url_for('topic', topic_id=post.id) }}" class="list-group-item">
+                                <div style="display: flex; align-items: center;">
+                                    <img src="{{ post.author.avatar(32) if post.author else url_for('static', filename='images/default_user_icon.png') }}" style="width:32px; height:32px; border-radius:50%; margin-right:8px;">
+                                    <div style="flex:1;">
+                                        <h4 class="list-group-item-heading">{{ post.title }}</h4>
+                                        <p class="list-group-item-text">{{ post.body[:200] }}{% if post.body|length > 200 %}...{% endif %}</p>
+                                        <small>
+                                            作者: <span class="username {% if post.author and post.author.gender == 'male' %}male{% elif post.author and post.author.gender == 'female' %}female{% endif %}">{{ post.author.username if post.author else 'Unknown User' }}</span>
+                                            | 發表於: <span class="moment-time" data-timestamp="{{ post.timestamp }}"></span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">沒有找到相關貼文</div>
+                {% endif %}
+            {% else %}
+                {% if results %}
+                    <div class="list-group">
+                        {% for user in results %}
+                            <a href="{{ url_for('user', username=user.username) }}" class="list-group-item">
+                                <h4 class="list-group-item-heading">
+                                    <span class="username {% if user.gender == 'male' %}male{% elif user.gender == 'female' %}female{% endif %}">{{ user.username }}</span>
+                                </h4>
+                                {% if user.about_me %}
+                                    <p class="list-group-item-text">{{ user.about_me }}</p>
+                                {% endif %}
+                                <small>註冊於: <span class="moment-time" data-timestamp="{{ user.created_at }}"></span></small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">沒有找到相關用戶</div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    // Initialize moment.js for timestamps
+    if (typeof moment !== 'undefined') {
+        moment.locale('zh-tw');
+        $('.moment-time').each(function() {
+            var timestamp = $(this).data('timestamp');
+            if (timestamp) {
+                var localTime = moment.utc(timestamp).local();
+                $(this).text(localTime.format('YYYY-MM-DD HH:mm'));
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

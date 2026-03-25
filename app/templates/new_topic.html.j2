@@ -1,0 +1,423 @@
+{% extends "base.html.j2" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block styles %}
+{{ super() }}
+<style>
+
+
+    .newtopic-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 0;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        z-index: 1001;
+        width: 800px;
+        max-width: 90%;
+        max-height: 90vh; /* 新增 */
+        overflow-y: auto; /* 新增 */
+        display: none;
+    }
+    
+    .newtopic-content {
+        padding: 25px 50px;
+        max-height: calc(90vh - 60px); /* 新增 */
+        overflow-y: auto; /* 新增 */
+    }
+
+    /* 響應式調整 */
+    @media (max-height: 700px) {
+        .newtopic-content {
+            padding: 15px 30px;
+        }
+        
+        textarea.form-control {
+            height: 80px;
+        }
+    }
+    
+    @media (max-height: 500px) {
+        .newtopic-content {
+            padding: 10px 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        textarea.form-control {
+            height: 60px;
+        }
+    }
+
+
+
+    /* 添加黑暗模式樣式 */
+    body.dark-mode .newtopic-modal {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .newtopic-content {
+        background-color: #2d2d2d;
+    }
+
+    body.dark-mode .form-control {
+        background-color: #444;
+        color: #e0e0e0;
+        border-color: #555;
+    }
+
+    body.dark-mode .form-control:focus {
+        background-color: #555;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .btn-hk-golden {
+        background-color: #3a5f8a;
+        border-color: #3a5f8a;
+    }
+
+    body.dark-mode .btn-hk-golden:hover {
+        background-color: #4a6f9a;
+        border-color: #4a6f9a;
+    }
+
+    body.dark-mode .custom-file-upload {
+        background-color: #444;
+        border-color: #555;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .custom-file-upload:hover {
+        background-color: #555;
+    }
+
+    body.dark-mode #filename-display {
+        color: #aaa;
+    }
+
+
+
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 1000;
+        display: none;
+    }
+    
+    .newtopic-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 0;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        z-index: 1001;
+        width: 800px;
+        max-width: 90%;
+        display: none;
+        overflow: hidden;
+    }
+    
+    .newtopic-header-bar {
+        height: 60px;
+        width: 100%;
+        background: linear-gradient(90deg, #346599);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .newtopic-header-bar h2 {
+        color: white;
+        margin: 0;
+        font-weight: bold;
+        font-size: 20px;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .newtopic-content {
+        padding: 25px 50px;
+    }
+    
+    .form-container {
+        padding: 20px 0;
+    }
+    
+    .btn-hk-golden {
+        background-color: #346599;
+        border-color: #346599;
+        color: white;
+        font-weight: bold;
+        padding: 12px 30px;
+        font-size: 16px;
+        width: 60%;
+        margin: 20px auto 0;
+        display: block;
+        border-radius: 4px;
+        transition: all 0.3s;
+    }
+    
+    .btn-hk-golden:hover {
+        background-color: #24466b;
+        border-color: #24466b;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-control {
+        height: 45px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 10px 15px;
+        font-size: 15px;
+        width: 100%;
+    }
+    
+    textarea.form-control {
+        height: 120px;
+        resize: vertical;
+    }
+    
+    .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 15px;
+        font-size: 30px;
+        cursor: pointer;
+        color: white;
+        z-index: 2;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .close-btn:hover {
+        color: #ffcc00;
+    }
+    
+    /* Style for file upload button */
+    .custom-file-upload {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        display: inline-block;
+        padding: 10px 15px;
+        cursor: pointer;
+        background-color: #f8f9fa;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .custom-file-upload:hover {
+        background-color: #e9ecef;
+    }
+    
+    #filename-display {
+        margin-top: 5px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* 錯誤信息樣式 */
+    .text-danger {
+        color: #d9534f;
+        font-size: 14px;
+    }
+
+    /* 文件上傳區域錯誤狀態 */
+    .has-error .custom-file-upload {
+        border-color: #d9534f;
+    }
+
+    .has-error #filename-display {
+        color: #d9534f;
+    }
+    
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="modal-overlay" id="newtopicOverlay"></div>
+
+<div class="newtopic-modal" id="newtopicModal">
+    <div class="newtopic-header-bar">
+        <h2><span class="glyphicon glyphicon-pencil"></span> 開新貼文</h2>
+        <span class="close-btn" id="closeNewtopic">&times;</span>
+    </div>
+    
+    <div class="newtopic-content">
+        <form action="{{ url_for('new_topic') }}" method="POST" enctype="multipart/form-data" class="form-container">
+            {{ form.hidden_tag() }}
+            
+            <!-- Add hidden field to store original category -->
+            <input type="hidden" id="originalCategory" name="originalCategory" value="{{ request.referrer.split('/').pop() if request.referrer and 'category' in request.referrer else '吹水台' }}">
+            
+            <div class="form-group">
+                {{ form.title.label }}
+                {{ form.title(class="form-control", placeholder="輸入標題") }}
+                {% for error in form.title.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.category.label }}
+                {{ form.category(class="form-control") }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.body.label }}
+                {{ form.body(class="form-control", rows=5, placeholder="輸入內容") }}
+                {% for error in form.body.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        {{ form.is_public() }} {{ form.is_public.label.text }}
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="image">上傳圖片 (可選)</label>
+                <label class="custom-file-upload">
+                    <input type="file" id="image" name="image" style="display: none;">
+                    <span id="file-label">選擇檔案</span>
+                </label>
+                <div id="filename-display"></div>
+                <div id="imageSizeError" class="text-danger" style="display: none;"></div>
+                {% if form.image.errors %}
+                    <div class="text-danger" style="margin-top: 5px;">
+                        {% for error in form.image.errors %}
+                            <span class="glyphicon glyphicon-exclamation-sign"></span> {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            {{ form.submit(class="btn btn-hk-golden") }}
+        </form>
+    </div>
+</div>
+
+<div id="mainContent">
+    {{ super() }}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $(document).ready(function() {
+        // Get original category from hidden field or default to '吹水台'
+        var originalCategory = $('#originalCategory').val() || '吹水台';
+        
+        // Show modal when page loads
+        showNewtopicModal();
+        
+        function showNewtopicModal() {
+            $('#newtopicOverlay').fadeIn(200);
+            $('#newtopicModal').fadeIn(300);
+            $('body').css('overflow', 'hidden');
+        }
+        
+        function hideNewtopicModal() {
+            $('#newtopicOverlay').fadeOut(200);
+            $('#newtopicModal').fadeOut(300, function() {
+                // Redirect back to original category after fade out
+                window.location.href = "{{ url_for('category', category='') }}" + originalCategory;
+            });
+            $('body').css('overflow', 'auto');
+        }
+        
+        // Close modal handlers
+        $('#closeNewtopic').click(hideNewtopicModal);
+        $('#newtopicOverlay').click(hideNewtopicModal);
+        
+        // Escape key to close
+        $(document).keyup(function(e) {
+            if (e.key === "Escape") {
+                hideNewtopicModal();
+            }
+        });
+        
+        // File upload display
+        $('#image').change(function() {
+            var filename = $(this).val().split('\\').pop();
+            if (filename) {
+                $('#file-label').text(filename);
+                $('#filename-display').text('已選擇: ' + filename);
+            } else {
+                $('#file-label').text('選擇檔案');
+                $('#filename-display').text('');
+            }
+        });
+        
+        // Form validation
+        $('form').submit(function(e) {
+            var isValid = true;
+            $('.form-control').each(function() {
+                if ($(this).val().trim() === '' && $(this).prop('required')) {
+                    $(this).addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('請填寫所有必填欄位');
+            }
+        });
+
+        const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+        const imageInput = $('#image');
+        const submitBtn = $('form').find('button[type="submit"]');
+        const sizeError = $('#imageSizeError');
+
+        imageInput.change(function() {
+            if (this.files && this.files[0]) {
+                const fileSize = this.files[0].size;
+                if (fileSize > MAX_FILE_SIZE) {
+                    sizeError.text('圖片大小不能超過2MB').show();
+                    submitBtn.prop('disabled', true);
+                } else {
+                    sizeError.hide();
+                    submitBtn.prop('disabled', false);
+                }
+            }
+        });
+
+        $('form').submit(function(e) {
+            if (imageInput[0].files && imageInput[0].files[0] && 
+                imageInput[0].files[0].size > MAX_FILE_SIZE) {
+                e.preventDefault();
+                sizeError.text('圖片大小不能超過2MB').show();
+            }
+        });
+
+
+    });
+</script>
+{% endblock %}

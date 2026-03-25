@@ -1,0 +1,498 @@
+{% extends "base.html.j2" %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    body{
+        margin-left:20px;
+    }
+    /* 通用樣式 */
+    .user-container {
+        max-width: 800px;
+        margin: 0 auto;
+        font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+    }
+    
+    /* 亮色模式 */
+    .user-info-card {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    
+    .user-detail-box {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .topic-panel {
+        border: 1px solid #e1e1e1;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .topic-panel:hover {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-color: #346599;
+    }
+    
+    /* 黑暗模式 */
+    body.dark-mode .user-info-card {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+    
+    body.dark-mode .user-detail-box {
+        background-color: #333;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .text-muted {
+        color: #aaa !important;
+    }
+    
+    body.dark-mode .topic-panel {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+    
+    body.dark-mode .topic-panel .panel-body {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .topic-stats {
+        color: #aaa !important;
+    }
+    
+    body.dark-mode .modal-content {
+        background-color: #333;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .modal-header {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+    
+    body.dark-mode .list-group-item {
+        background-color: #333;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .list-group-item:hover {
+        background-color: #3a3a3a;
+    }
+    
+    /* 性別顏色 */
+    .username.male {
+        color: #346599;
+    }
+    
+    .username.female {
+        color: #d9534f;
+    }
+    
+    body.dark-mode .username.male {
+        color: #5a8fd3;
+    }
+    
+    body.dark-mode .username.female {
+        color: #ff6b6b;
+    }
+    
+    /* 響應式調整 */
+    @media (max-width: 768px) {
+        .user-container {
+            padding: 0 15px;
+        }
+    }
+
+
+
+.btn-message {
+        background-color: #346599;
+        color: white;
+        border-radius: 4px;
+        padding: 8px 15px;
+        display: inline-flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+    
+    .btn-message:hover {
+        background-color: #2a5480;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-message .glyphicon {
+        margin-right: 5px;
+    }
+    
+    body.dark-mode .btn-message {
+        background-color: #3a5f8a;
+    }
+    
+    body.dark-mode .btn-message:hover {
+        background-color: #4a6f9a;
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="user-container">
+    <div class="user-info-card">
+        <table width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+                <td width="120px" valign="top" style="padding-right: 15px;">
+                    {% if user %}
+                        <img src="{{ user.avatar(100) }}" style="border: 1px solid #ccc; width: 100px; height: 100px; border-radius: 4px;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='default_avatar.png') }}" style="border: 1px solid #ccc; width: 100px; height: 100px; border-radius: 4px;">
+                    {% endif %}
+                </td>
+                <td valign="top">
+                    <div style="margin-bottom: 10px;">
+                        <span class="username {% if user.gender == 'male' %}male{% else %}female{% endif %}" style="font-size: 18px; font-weight: bold;">
+                            {{ user.username }}
+                        </span>
+                        <span class="text-muted" style="font-size: 12px; margin-left: 10px;">#{{ user.id }}</span>
+                    </div>
+                    
+                    <div style="display: flex; margin-bottom: 10px;">
+                        <div style="margin-right: 20px;">
+                            <a href="#followingModal" data-toggle="modal" class="social-stat">
+                                <strong>{{ user.followed|length }}</strong>
+                                <span class="text-muted"> 追蹤中</span>
+                            </a>
+                        </div>
+                        <div style="margin-right: 20px;">
+                            <a href="#followersModal" data-toggle="modal" class="social-stat">
+                                <strong>{{ user.followers|length }}</strong>
+                                <span class="text-muted"> 追蹤者</span>
+                            </a>
+                        </div>
+                        {% if current_user.is_authenticated and user == current_user %}
+                        <div>
+                            <a href="#blockedUsersModal" data-toggle="modal" class="social-stat">
+                                <strong>{{ current_user.blocked|length }}</strong>
+                                <span class="text-muted"> 封鎖用戶</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 用戶詳細信息 -->
+                    <div class="user-detail-box">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td class="text-muted">用戶編號：</td>
+                                <td>#{{ user.user_number or 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">用戶名：</td>
+                                <td>{{ user.username }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">性別：</td>
+                                <td>{% if user.gender == 'male' %}男{% elif user.gender == 'female' %}女{% else %}未設定{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">電鄱地址：</td>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">加入日期：</td>
+                                <td><span class="moment-time" data-timestamp="{{ user.created_at }}"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">最後上線：</td>
+                                <td><span class="moment-time" data-timestamp="{{ user.last_seen }}"></span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- 操作按鈕 -->
+                    <div style="margin-top: 10px;">
+                        {% if user == current_user %}
+                            <a href="{{ url_for('change_password') }}" class="btn-action">
+                                <i class="glyphicon glyphicon-lock"></i> 更改密碼
+                            </a>
+                            <a href="{{ url_for('edit_profile') }}" class="btn-action">
+                                <i class="glyphicon glyphicon-edit"></i> 編輯資料
+                            </a>
+                        {% else %}
+                            <!-- 新增發送訊息按鈕 -->
+                            <a href="{{ url_for('send_message', recipient=user.username) }}" class="btn-message">
+                                <span class="glyphicon glyphicon-envelope"></span> 發送訊息
+                            </a>
+                            
+                            {% if not current_user.is_following(user) %}
+                                <a href="{{ url_for('follow', username=user.username) }}" class="btn-action">
+                                    <i class="glyphicon glyphicon-plus"></i> 追蹤
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('unfollow', username=user.username) }}" class="btn-action">
+                                    <i class="glyphicon glyphicon-minus"></i> 取消追蹤
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                        {% if user != current_user %}
+                            {% if current_user.is_blocking(user) %}
+                                <a href="{{ url_for('unblock', username=user.username) }}" class="btn-action">
+                                    <i class="glyphicon glyphicon-ok-circle"></i> 解除封鎖
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('block', username=user.username) }}" class="btn-action">
+                                    <i class="glyphicon glyphicon-ban-circle"></i> 封鎖用戶
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 關於我 -->
+    <div class="user-info-card">
+        <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 0;" class="dark-mode-text">關於我</h3>
+        {% if user.about_me %}
+            <div class="user-detail-box">
+                {{ user.about_me }}
+            </div>
+        {% else %}
+            <div class="user-detail-box text-muted">
+                暫無個人介紹
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- 主題列表 -->
+    <div style="margin-top: 20px;">
+        <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 5px;" class="dark-mode-text">我的主題</h3>
+        {% if topics %}
+            {% for post in topics %}
+                <a href="{{ url_for('topic', topic_id=post.id) }}" style="text-decoration: none; color: inherit;">
+                    <div class="topic-panel panel panel-default">
+                        <div class="panel-body">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <div>
+                                    <span class="username {% if post.author.gender == 'male' %}male{% else %}female{% endif %}">
+                                        {{ post.author.username }}
+                                    </span>
+                                    <span class="text-muted" style="margin-left: 10px; font-size: 12px;">
+                                        <span class="moment-time" data-timestamp="{{ post.timestamp }}"></span>
+                                    </span>
+                                </div>
+                                <span class="label label-primary">{{ post.category }}</span>
+                            </div>
+                            <h4 style="margin-top: 0; margin-bottom: 10px;">{{ post.title }}</h4>
+                            <div class="topic-stats" style="color: #666; font-size: 14px;">
+                                <span style="margin-right: 15px;">
+                                    <i class="glyphicon glyphicon-comment"></i> {{ post.replies_count or 0 }}
+                                </span>
+                                <span style="margin-right: 15px;">
+                                    <i class="glyphicon glyphicon-thumbs-up"></i> {{ post.likes or 0 }}
+                                </span>
+                                <span>
+                                    <i class="glyphicon glyphicon-thumbs-down"></i> {{ post.dislikes or 0 }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                此用戶暫無Topic
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- 分頁導航 -->
+    <nav aria-label="..." style="margin-top: 20px;">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> 較新的主題
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    較舊的主題 <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- 追蹤中 Modal -->
+<div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="followingModalLabel">{{ user.username }} 追蹤中的用戶</h4>
+            </div>
+            <div class="modal-body">
+                {% if user.followed|length > 0 %}
+                    <div class="list-group">
+                        {% for followed_user in user.followed %}
+                            <a href="{{ url_for('user', username=followed_user.username) }}" class="list-group-item">
+                                <img src="{{ followed_user.avatar(32) }}" style="border-radius: 50%; margin-right: 10px;">
+                                {{ followed_user.username }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        {{ user.username }} 目前沒有追蹤任何用戶
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 追蹤者 Modal -->
+<div class="modal fade" id="followersModal" tabindex="-1" role="dialog" aria-labelledby="followersModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="followersModalLabel">{{ user.username }} 的追蹤者</h4>
+            </div>
+            <div class="modal-body">
+                {% if user.followers|length > 0 %}
+                    <div class="list-group">
+                        {% for follower in user.followers %}
+                            <a href="{{ url_for('user', username=follower.username) }}" class="list-group-item">
+                                <img src="{{ follower.avatar(32) }}" style="border-radius: 50%; margin-right: 10px;">
+                                {{ follower.username }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        {{ user.username }} 目前沒有追蹤者
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 封鎖用戶 Modal -->
+<div class="modal fade" id="blockedUsersModal" tabindex="-1" role="dialog" aria-labelledby="blockedUsersModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="blockedUsersModalLabel">已封鎖的用戶</h4>
+            </div>
+            <div class="modal-body">
+                {% if current_user.blocked|length > 0 %}
+                    <div class="list-group">
+                        {% for blocked_user in current_user.blocked %}
+                            <div class="list-group-item" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <img src="{{ blocked_user.avatar(32) }}" style="border-radius: 50%; margin-right: 10px;">
+                                    {{ blocked_user.username }}
+                                </div>
+                                <a href="{{ url_for('unblock', username=blocked_user.username) }}" class="btn btn-danger btn-xs">
+                                    <span class="glyphicon glyphicon-remove"></span> 解除封鎖
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        您目前沒有封鎖任何用戶
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    // Initialize moment.js for timestamps
+    if (typeof moment !== 'undefined') {
+        moment.locale('zh-tw');
+        
+    // 時間顯示刷新
+    function updateTimestamps() {
+        $('.moment-time').each(function() {
+            const timestamp = $(this).data('timestamp');
+            if (timestamp) {
+                    const localTime = moment.utc(timestamp).local();
+                    $(this).text(localTime.fromNow());
+            }
+        });
+    }
+    
+    // 初始更新
+    updateTimestamps();
+    
+    // 每分鐘自動更新
+    setInterval(updateTimestamps, 60000);
+    }
+    
+    // 社交統計懸停效果
+    $('.social-stat').hover(
+        function() {
+            $(this).css('opacity', '0.8');
+        },
+        function() {
+            $(this).css('opacity', '1');
+        }
+    );
+    
+    // 操作按鈕懸停效果
+    $('.btn-action').hover(
+        function() {
+            $(this).css({
+                'opacity': '0.8',
+                'text-decoration': 'underline'
+            });
+        },
+        function() {
+            $(this).css({
+                'opacity': '1',
+                'text-decoration': 'none'
+            });
+        }
+    );
+});
+</script>
+{% endblock %}

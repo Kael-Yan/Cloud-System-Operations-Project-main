@@ -1,0 +1,1277 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata:
+    Generator: "former2"
+Description: ""
+Resources:
+    EC2Instance:
+        Type: "AWS::EC2::Instance"
+        Properties:
+            ImageId: "ami-0ab8b9aed40e77e9e"
+            InstanceType: "t3.medium"
+            AvailabilityZone: !GetAtt EC2Subnet.AvailabilityZone
+            Tenancy: "default"
+            SubnetId: !Ref EC2Subnet
+            EbsOptimized: false
+            SecurityGroupIds: 
+              - !Ref EC2SecurityGroup4
+              - !Ref EC2SecurityGroup4
+              - !Ref EC2SecurityGroup4
+            SourceDestCheck: true
+            BlockDeviceMappings: 
+              - 
+                DeviceName: "/dev/xvda"
+                Ebs: 
+                    Encrypted: false
+                    VolumeSize: 30
+                    SnapshotId: "snap-0d82f530086080496"
+                    VolumeType: "gp3"
+                    DeleteOnTermination: true
+            UserData: "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSIvLyIKCi0tLy8KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9ub2RlLmVrcy5hd3MKCi0tLQphcGlWZXJzaW9uOiBub2RlLmVrcy5hd3MvdjFhbHBoYTEKa2luZDogTm9kZUNvbmZpZwpzcGVjOgogIGNsdXN0ZXI6CiAgICBhcGlTZXJ2ZXJFbmRwb2ludDogaHR0cHM6Ly8yMkZEQTRCNUJBMEYwM0E0QTNDOUMwNEFDRjQ2OEUzRi5ncjcudXMtZWFzdC0xLmVrcy5hbWF6b25hd3MuY29tCiAgICBjZXJ0aWZpY2F0ZUF1dGhvcml0eTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVUkNWRU5EUVdVeVowRjNTVUpCWjBsSlFYTjJVMkpIU1hBM2EyZDNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI1VGxSQk0wMUVTWGROZWswMVRVUkNZVVozTUhwT1ZFRXlUWHBCZDAxNlVUQk5SRUpoVFVKVmVBcEZla0ZTUW1kT1ZrSkJUVlJEYlhReFdXMVdlV0p0VmpCYVdFMTNaMmRGYVUxQk1FZERVM0ZIVTBsaU0wUlJSVUpCVVZWQlFUUkpRa1IzUVhkblowVkxDa0Z2U1VKQlVVUkVWSHB0TVdoVE1HbE5jVFZZU1ZoSk1uSTJXVGxyWXpWYVlXRkpaMDV1YUhodllYaEJRbWQ1UWpBNFpFcDVaVUp2U3l0aFNsUnpaRUlLY1ZGWGVHRkxXbFpuZWxkSFRVTTRjV3N5U0ZrM2FteFpNbGhYTWtOVFJreGFjREV6TDNSMFVFdEZaa1pKT1ZjeGRqTkhaRWhTUVdsemRYaFJaMWRSWmdwd2NYQlRWMVZ3VURFdk9WVnRjVEZoY2xaaUsyeEpURGt6ZWtFck1GbHdSVzVvTW5oWk0ybEtkVFk0YW00MlpHcGpRM2g1Yld4cGNYTTVOV3d2ZW1GbENsUTNaM0oyVHpsNWJHSkVkek5sWTFsUlMwNWlOMk5DTjJSRFZEUkVOVU5FV0RFMWNFNWFkVFJoU0hsVWFqZExOV1p2TUhvNU5GRkxSaXR0VldsbFUwZ0tkbVZMWlVSclZVSldlbEF6WVdOcmJYRnZhVE56U1ZsQldUQnJZVzUxVmtWMVprRmxOMGRrVnpkUWJEZFdSa0p4Y3pZeE5qSm5hVXBDYUhWaVZsSlRSZ3BWYjFWVlZGaE9ZVXRyVEhkSGRHTlFPVVEyV0hWTFZFOUhOMHRTUVdkTlFrRkJSMnBYVkVKWVRVRTBSMEV4VldSRWQwVkNMM2RSUlVGM1NVTndSRUZRQ2tKblRsWklVazFDUVdZNFJVSlVRVVJCVVVndlRVSXdSMEV4VldSRVoxRlhRa0pSYjFKTFEwczJZM2xtUVZGYVJTOW1iMDVoYnpKTmRHNW1TMVZFUVZZS1FtZE9Wa2hTUlVWRWFrRk5aMmR3Y21SWFNteGpiVFZzWkVkV2VrMUJNRWREVTNGSFUwbGlNMFJSUlVKRGQxVkJRVFJKUWtGUlFVaEJja1JHUWs4clRBcDFhM1UyWVRsdGIwSm5XR0ZYUzJKeE9XdHZjbkl3VVV0QmFUSTVka1JLWnpSQ1NrOWxZVWR5TlhWd00yWTNka3BQYzFOWVRqVk9iMlJsVkdwdFVVaGlDbFZvYldNNE1HZzVPR3B4YUZVNGNTOW1abUpSYlhsYU5qZGlkVWRyVDJKalZDdDFPRUl4VERodmVETjZRa1oxZGpWME1Wa3dhaTlQTUhjek4wOVBUak1LTm5ocmQxUnNRekJTYWs0dlVrMXRhakZoYTFoVlluYzFiWGxNVDJSTmRYTXhlVWxsZVZCVmVYcHhZVU56SzA5eGRuTjVkR2xwWjBvMk1XaG1kMjVXWVFwelUwMTZiVU5rVWtkWGRIRlRXbWc1U2xOdk1tWkJSU3RKTkUxUUsycE5kVTB4UVdSdWNGSnJTMlJ3Y1ZkRGJWVTJPWFY0Ykd0UWRYY3ZNMmMwUVRaWkNuaFlSMmd2Y0V0V01raERTMVpDWkZodFIxSlRURVkyVkZKV2JFSXhXWE5oVVZCcGRsZHZNV0p6YVc0clZURTROekpOZEcxRmFUSjZjV3BRUWxJNVltWUtSbkYwUldGMGVXbHZaSEpMQ2kwdExTMHRSVTVFSUVORlVsUkpSa2xEUVZSRkxTMHRMUzBLCiAgICBjaWRyOiAxNzIuMjAuMC4wLzE2CiAgICBuYW1lOiBESUxXTC1DYW1wdXNfQ2x1c3RlcgogIGt1YmVsZXQ6CiAgICBjb25maWc6CiAgICAgIG1heFBvZHM6IDE3CiAgICAgIGNsdXN0ZXJETlM6CiAgICAgIC0gMTcyLjIwLjAuMTAKICAgIGZsYWdzOgogICAgLSAiLS1ub2RlLWxhYmVscz1la3MuYW1hem9uYXdzLmNvbS9ub2RlZ3JvdXAtaW1hZ2U9YW1pLTBhYjhiOWFlZDQwZTc3ZTllLGVrcy5hbWF6b25hd3MuY29tL2NhcGFjaXR5VHlwZT1PTl9ERU1BTkQsZWtzLmFtYXpvbmF3cy5jb20vbm9kZWdyb3VwPUVLU19ub2RlIgoKLS0vLy0t"
+            IamInstanceProfile: "eks-6ccbe4a0-dbe8-3cb2-b5ea-b66dc632eac1"
+            Tags: 
+              - 
+                Key: "k8s.io/cluster-autoscaler/enabled"
+                Value: "true"
+              - 
+                Key: "eks:cluster-name"
+                Value: "DILWL-Campus_Cluster"
+              - 
+                Key: "eks:nodegroup-name"
+                Value: "EKS_node"
+              - 
+                Key: "k8s.io/cluster-autoscaler/DILWL-Campus_Cluster"
+                Value: "owned"
+              - 
+                Key: "kubernetes.io/cluster/DILWL-Campus_Cluster"
+                Value: "owned"
+            HibernationOptions: 
+                Configured: false
+            CpuOptions: 
+                CoreCount: 1
+                ThreadsPerCore: 2
+            EnclaveOptions: 
+                Enabled: false
+
+    ElasticLoadBalancingLoadBalancer:
+        Type: "AWS::ElasticLoadBalancing::LoadBalancer"
+        Properties:
+            LoadBalancerName: "a25eb1b9c599f466da64259b9ac764bf"
+            Listeners: 
+              - 
+                InstancePort: 30638
+                InstanceProtocol: "TCP"
+                LoadBalancerPort: 15443
+                Protocol: "TCP"
+              - 
+                InstancePort: 31455
+                InstanceProtocol: "TCP"
+                LoadBalancerPort: 15021
+                Protocol: "TCP"
+              - 
+                InstancePort: 32597
+                InstanceProtocol: "TCP"
+                LoadBalancerPort: 31400
+                Protocol: "TCP"
+              - 
+                InstancePort: 31991
+                InstanceProtocol: "TCP"
+                LoadBalancerPort: 443
+                Protocol: "TCP"
+              - 
+                InstancePort: 32274
+                InstanceProtocol: "TCP"
+                LoadBalancerPort: 80
+                Protocol: "TCP"
+            Subnets: 
+              - !Ref EC2Subnet3
+              - !Ref EC2Subnet2
+            Instances: 
+              - !Ref EC2Instance
+            HealthCheck: 
+                Target: "TCP:31455"
+                Interval: 10
+                Timeout: 5
+                UnhealthyThreshold: 6
+                HealthyThreshold: 2
+            SecurityGroups: 
+              - !Ref EC2SecurityGroup
+            Scheme: "internet-facing"
+            CrossZone: false
+            AccessLoggingPolicy: 
+                Enabled: false
+            ConnectionDrainingPolicy: 
+                Enabled: false
+                Timeout: 300
+            ConnectionSettings: 
+                IdleTimeout: 60
+            Tags: 
+              - 
+                Key: "kubernetes.io/service-name"
+                Value: "istio-system/istio-ingressgateway"
+              - 
+                Key: "kubernetes.io/cluster/DILWL-Campus_Cluster"
+                Value: "owned"
+
+    AutoScalingAutoScalingGroup:
+        Type: "AWS::AutoScaling::AutoScalingGroup"
+        Properties:
+            AutoScalingGroupName: "eks-EKS_node-6ccbe4a0-dbe8-3cb2-b5ea-b66dc632eac1"
+            MixedInstancesPolicy: 
+                LaunchTemplate: 
+                    LaunchTemplateSpecification: 
+                        LaunchTemplateId: !Ref EC2LaunchTemplate
+                        LaunchTemplateName: "eks-6ccbe4a0-dbe8-3cb2-b5ea-b66dc632eac1"
+                        Version: "1"
+                    Overrides: 
+                      - 
+                        InstanceType: "t3.medium"
+                InstancesDistribution: 
+                    OnDemandAllocationStrategy: "prioritized"
+                    OnDemandBaseCapacity: 0
+                    OnDemandPercentageAboveBaseCapacity: 100
+                    SpotAllocationStrategy: "lowest-price"
+                    SpotInstancePools: 2
+            MinSize: 1
+            MaxSize: 1
+            DesiredCapacity: 1
+            Cooldown: 300
+            AvailabilityZones: 
+              - !GetAtt EC2Subnet3.AvailabilityZone
+              - !GetAtt EC2Instance.AvailabilityZone
+            HealthCheckType: "EC2"
+            HealthCheckGracePeriod: 15
+            VPCZoneIdentifier: 
+              - !Ref EC2Subnet
+              - !Ref EC2Subnet4
+            TerminationPolicies: 
+              - "AllocationStrategy"
+              - "OldestLaunchTemplate"
+              - "OldestInstance"
+            ServiceLinkedRoleARN: !Sub "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+            MetricsCollection: 
+                Granularity: "1Minute"
+                Metrics: 
+                  - "GroupInServiceCapacity"
+                  - "GroupStandbyCapacity"
+                  - "WarmPoolMinSize"
+                  - "GroupAndWarmPoolDesiredCapacity"
+                  - "WarmPoolWarmedCapacity"
+                  - "GroupTerminatingCapacity"
+                  - "GroupInServiceInstances"
+                  - "GroupStandbyInstances"
+                  - "GroupTotalInstances"
+                  - "GroupDesiredCapacity"
+                  - "GroupAndWarmPoolTotalCapacity"
+                  - "GroupPendingInstances"
+                  - "WarmPoolTotalCapacity"
+                  - "GroupMaxSize"
+                  - "GroupMinSize"
+                  - "GroupPendingCapacity"
+                  - "GroupTerminatingInstances"
+                  - "WarmPoolPendingCapacity"
+                  - "WarmPoolDesiredCapacity"
+                  - "GroupTotalCapacity"
+                  - "WarmPoolTerminatingCapacity"
+            Tags: 
+              - 
+                Key: "eks:cluster-name"
+                Value: "DILWL-Campus_Cluster"
+                PropagateAtLaunch: true
+              - 
+                Key: "eks:nodegroup-name"
+                Value: "EKS_node"
+                PropagateAtLaunch: true
+              - 
+                Key: "k8s.io/cluster-autoscaler/DILWL-Campus_Cluster"
+                Value: "owned"
+                PropagateAtLaunch: true
+              - 
+                Key: "k8s.io/cluster-autoscaler/enabled"
+                Value: "true"
+                PropagateAtLaunch: true
+              - 
+                Key: "kubernetes.io/cluster/DILWL-Campus_Cluster"
+                Value: "owned"
+                PropagateAtLaunch: true
+            NewInstancesProtectedFromScaleIn: false
+            CapacityRebalance: true
+
+    AutoScalingLifecycleHook:
+        Type: "AWS::AutoScaling::LifecycleHook"
+        Properties:
+            LifecycleHookName: "Launch-LC-Hook"
+            AutoScalingGroupName: !Ref AutoScalingAutoScalingGroup
+            NotificationTargetARN: !Sub "arn:aws:sns:${AWS::Region}:156650068264:eks-asg-lifecycle-hook-topic"
+            HeartbeatTimeout: 1800
+            DefaultResult: "CONTINUE"
+            LifecycleTransition: "autoscaling:EC2_INSTANCE_LAUNCHING"
+
+    AutoScalingLifecycleHook2:
+        Type: "AWS::AutoScaling::LifecycleHook"
+        Properties:
+            LifecycleHookName: "Terminate-LC-Hook"
+            AutoScalingGroupName: !Ref AutoScalingAutoScalingGroup
+            NotificationTargetARN: !Sub "arn:aws:sns:${AWS::Region}:156650068264:eks-asg-lifecycle-hook-topic"
+            HeartbeatTimeout: 1800
+            DefaultResult: "CONTINUE"
+            LifecycleTransition: "autoscaling:EC2_INSTANCE_TERMINATING"
+
+    EC2SecurityGroup:
+        Type: "AWS::EC2::SecurityGroup"
+        Properties:
+            GroupDescription: "Security group for Kubernetes ELB a25eb1b9c599f466da64259b9ac764bf (istio-system/istio-ingressgateway)"
+            GroupName: "k8s-elb-a25eb1b9c599f466da64259b9ac764bf"
+            Tags: 
+              - 
+                Key: "kubernetes.io/cluster/DILWL-Campus_Cluster"
+                Value: "owned"
+            VpcId: !Ref EC2VPC
+            SecurityGroupIngress: 
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 80
+                IpProtocol: "tcp"
+                ToPort: 80
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 15443
+                IpProtocol: "tcp"
+                ToPort: 15443
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 15021
+                IpProtocol: "tcp"
+                ToPort: 15021
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 3
+                IpProtocol: "icmp"
+                ToPort: 4
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 31400
+                IpProtocol: "tcp"
+                ToPort: 31400
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 443
+                IpProtocol: "tcp"
+                ToPort: 443
+            SecurityGroupEgress: 
+              - 
+                CidrIp: "0.0.0.0/0"
+                IpProtocol: "-1"
+
+    EC2SecurityGroup2:
+        Type: "AWS::EC2::SecurityGroup"
+        Properties:
+            GroupDescription: "EKS-Nodes-SG"
+            GroupName: "EKS-Nodes-SG"
+            VpcId: !Ref EC2VPC
+            SecurityGroupIngress: 
+              - 
+                SourceSecurityGroupId: !Ref EC2SecurityGroup3
+                SourceSecurityGroupOwnerId: !Ref AWS::AccountId
+                FromPort: 8080
+                IpProtocol: "tcp"
+                ToPort: 8080
+              - 
+                SourceSecurityGroupId: "sg-09db70667cd19fcbe"
+                SourceSecurityGroupOwnerId: !Ref AWS::AccountId
+                IpProtocol: "-1"
+            SecurityGroupEgress: 
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 80
+                IpProtocol: "tcp"
+                ToPort: 80
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 443
+                IpProtocol: "tcp"
+                ToPort: 443
+              - 
+                DestinationPrefixListId: "pl-02cd2c6b"
+                FromPort: 443
+                IpProtocol: "tcp"
+                ToPort: 443
+
+    EC2SecurityGroup3:
+        Type: "AWS::EC2::SecurityGroup"
+        Properties:
+            GroupDescription: "ALB-SG"
+            GroupName: "ALB-SG"
+            VpcId: !Ref EC2VPC
+            SecurityGroupIngress: 
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 80
+                IpProtocol: "tcp"
+                ToPort: 80
+              - 
+                CidrIp: "0.0.0.0/0"
+                FromPort: 443
+                IpProtocol: "tcp"
+                ToPort: 443
+            SecurityGroupEgress: 
+              - 
+                DestinationSecurityGroupId: "sg-09db70667cd19fcbe"
+                FromPort: 8080
+                IpProtocol: "tcp"
+                ToPort: 8080
+
+    EC2SecurityGroup4:
+        Type: "AWS::EC2::SecurityGroup"
+        Properties:
+            GroupDescription: "EKS created security group applied to ENI that is attached to EKS Control Plane master nodes, as well as any managed workloads."
+            GroupName: "eks-cluster-sg-DILWL-Campus_Cluster-1004789"
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "eks-cluster-sg-DILWL-Campus_Cluster-1004789"
+              - 
+                Key: "kubernetes.io/cluster/DILWL-Campus_Cluster"
+                Value: "owned"
+            VpcId: !Ref EC2VPC
+            SecurityGroupIngress: 
+              - 
+                SourceSecurityGroupId: "sg-0d74f85bb8385a247"
+                SourceSecurityGroupOwnerId: !Ref AWS::AccountId
+                Description: "Allows EFA traffic, which is not matched by CIDR rules."
+                IpProtocol: "-1"
+              - 
+                SourceSecurityGroupId: !Ref EC2SecurityGroup
+                SourceSecurityGroupOwnerId: !Ref AWS::AccountId
+                IpProtocol: "-1"
+            SecurityGroupEgress: 
+              - 
+                CidrIp: "0.0.0.0/0"
+                IpProtocol: "-1"
+              - 
+                DestinationSecurityGroupId: "sg-0d74f85bb8385a247"
+                Description: "Allows EFA traffic, which is not matched by CIDR rules."
+                IpProtocol: "-1"
+
+    EC2LaunchTemplate:
+        Type: "AWS::EC2::LaunchTemplate"
+        Properties:
+            LaunchTemplateName: "eks-6ccbe4a0-dbe8-3cb2-b5ea-b66dc632eac1"
+            LaunchTemplateData: 
+                UserData: "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSIvLyIKCi0tLy8KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9ub2RlLmVrcy5hd3MKCi0tLQphcGlWZXJzaW9uOiBub2RlLmVrcy5hd3MvdjFhbHBoYTEKa2luZDogTm9kZUNvbmZpZwpzcGVjOgogIGNsdXN0ZXI6CiAgICBhcGlTZXJ2ZXJFbmRwb2ludDogaHR0cHM6Ly8yMkZEQTRCNUJBMEYwM0E0QTNDOUMwNEFDRjQ2OEUzRi5ncjcudXMtZWFzdC0xLmVrcy5hbWF6b25hd3MuY29tCiAgICBjZXJ0aWZpY2F0ZUF1dGhvcml0eTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVUkNWRU5EUVdVeVowRjNTVUpCWjBsSlFYTjJVMkpIU1hBM2EyZDNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI1VGxSQk0wMUVTWGROZWswMVRVUkNZVVozTUhwT1ZFRXlUWHBCZDAxNlVUQk5SRUpoVFVKVmVBcEZla0ZTUW1kT1ZrSkJUVlJEYlhReFdXMVdlV0p0VmpCYVdFMTNaMmRGYVUxQk1FZERVM0ZIVTBsaU0wUlJSVUpCVVZWQlFUUkpRa1IzUVhkblowVkxDa0Z2U1VKQlVVUkVWSHB0TVdoVE1HbE5jVFZZU1ZoSk1uSTJXVGxyWXpWYVlXRkpaMDV1YUhodllYaEJRbWQ1UWpBNFpFcDVaVUp2U3l0aFNsUnpaRUlLY1ZGWGVHRkxXbFpuZWxkSFRVTTRjV3N5U0ZrM2FteFpNbGhYTWtOVFJreGFjREV6TDNSMFVFdEZaa1pKT1ZjeGRqTkhaRWhTUVdsemRYaFJaMWRSWmdwd2NYQlRWMVZ3VURFdk9WVnRjVEZoY2xaaUsyeEpURGt6ZWtFck1GbHdSVzVvTW5oWk0ybEtkVFk0YW00MlpHcGpRM2g1Yld4cGNYTTVOV3d2ZW1GbENsUTNaM0oyVHpsNWJHSkVkek5sWTFsUlMwNWlOMk5DTjJSRFZEUkVOVU5FV0RFMWNFNWFkVFJoU0hsVWFqZExOV1p2TUhvNU5GRkxSaXR0VldsbFUwZ0tkbVZMWlVSclZVSldlbEF6WVdOcmJYRnZhVE56U1ZsQldUQnJZVzUxVmtWMVprRmxOMGRrVnpkUWJEZFdSa0p4Y3pZeE5qSm5hVXBDYUhWaVZsSlRSZ3BWYjFWVlZGaE9ZVXRyVEhkSGRHTlFPVVEyV0hWTFZFOUhOMHRTUVdkTlFrRkJSMnBYVkVKWVRVRTBSMEV4VldSRWQwVkNMM2RSUlVGM1NVTndSRUZRQ2tKblRsWklVazFDUVdZNFJVSlVRVVJCVVVndlRVSXdSMEV4VldSRVoxRlhRa0pSYjFKTFEwczJZM2xtUVZGYVJTOW1iMDVoYnpKTmRHNW1TMVZFUVZZS1FtZE9Wa2hTUlVWRWFrRk5aMmR3Y21SWFNteGpiVFZzWkVkV2VrMUJNRWREVTNGSFUwbGlNMFJSUlVKRGQxVkJRVFJKUWtGUlFVaEJja1JHUWs4clRBcDFhM1UyWVRsdGIwSm5XR0ZYUzJKeE9XdHZjbkl3VVV0QmFUSTVka1JLWnpSQ1NrOWxZVWR5TlhWd00yWTNka3BQYzFOWVRqVk9iMlJsVkdwdFVVaGlDbFZvYldNNE1HZzVPR3B4YUZVNGNTOW1abUpSYlhsYU5qZGlkVWRyVDJKalZDdDFPRUl4VERodmVETjZRa1oxZGpWME1Wa3dhaTlQTUhjek4wOVBUak1LTm5ocmQxUnNRekJTYWs0dlVrMXRhakZoYTFoVlluYzFiWGxNVDJSTmRYTXhlVWxsZVZCVmVYcHhZVU56SzA5eGRuTjVkR2xwWjBvMk1XaG1kMjVXWVFwelUwMTZiVU5rVWtkWGRIRlRXbWc1U2xOdk1tWkJSU3RKTkUxUUsycE5kVTB4UVdSdWNGSnJTMlJ3Y1ZkRGJWVTJPWFY0Ykd0UWRYY3ZNMmMwUVRaWkNuaFlSMmd2Y0V0V01raERTMVpDWkZodFIxSlRURVkyVkZKV2JFSXhXWE5oVVZCcGRsZHZNV0p6YVc0clZURTROekpOZEcxRmFUSjZjV3BRUWxJNVltWUtSbkYwUldGMGVXbHZaSEpMQ2kwdExTMHRSVTVFSUVORlVsUkpSa2xEUVZSRkxTMHRMUzBLCiAgICBjaWRyOiAxNzIuMjAuMC4wLzE2CiAgICBuYW1lOiBESUxXTC1DYW1wdXNfQ2x1c3RlcgogIGt1YmVsZXQ6CiAgICBjb25maWc6CiAgICAgIG1heFBvZHM6IDE3CiAgICAgIGNsdXN0ZXJETlM6CiAgICAgIC0gMTcyLjIwLjAuMTAKICAgIGZsYWdzOgogICAgLSAiLS1ub2RlLWxhYmVscz1la3MuYW1hem9uYXdzLmNvbS9ub2RlZ3JvdXAtaW1hZ2U9YW1pLTBhYjhiOWFlZDQwZTc3ZTllLGVrcy5hbWF6b25hd3MuY29tL2NhcGFjaXR5VHlwZT1PTl9ERU1BTkQsZWtzLmFtYXpvbmF3cy5jb20vbm9kZWdyb3VwPUVLU19ub2RlIgoKLS0vLy0t"
+                BlockDeviceMappings: 
+                  - 
+                    DeviceName: "/dev/xvda"
+                    Ebs: 
+                        DeleteOnTermination: true
+                        VolumeSize: 30
+                        VolumeType: "gp3"
+                IamInstanceProfile: 
+                    Name: "eks-6ccbe4a0-dbe8-3cb2-b5ea-b66dc632eac1"
+                NetworkInterfaces: 
+                  - 
+                    DeviceIndex: 0
+                    Groups: 
+                      - !Ref EC2SecurityGroup4
+                ImageId: "ami-0ab8b9aed40e77e9e"
+                InstanceType: "t3.medium"
+                MetadataOptions: 
+                    HttpPutResponseHopLimit: 1
+                    HttpTokens: "required"
+
+    EC2Volume:
+        Type: "AWS::EC2::Volume"
+        Properties:
+            AvailabilityZone: !GetAtt EC2Instance.AvailabilityZone
+            Encrypted: false
+            Size: 30
+            VolumeType: "gp3"
+            SnapshotId: "snap-0d82f530086080496"
+            MultiAttachEnabled: false
+
+    EC2VolumeAttachment:
+        Type: "AWS::EC2::VolumeAttachment"
+        Properties:
+            VolumeId: !Ref EC2Volume
+            InstanceId: !Ref EC2Instance
+            Device: "/dev/xvda"
+
+    EC2NetworkInterface:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: ""
+            PrivateIpAddress: !GetAtt EC2Instance.PrivateIp
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: !GetAtt EC2Instance.PrivateIp
+                Primary: true
+              - 
+                PrivateIpAddress: "10.0.4.99"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.117"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.27"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.204"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.46"
+                Primary: false
+            SubnetId: !Ref EC2Subnet
+            SourceDestCheck: true
+            Tags: 
+              - 
+                Key: "node.k8s.amazonaws.com/instance_id"
+                Value: !Ref EC2Instance
+              - 
+                Key: "eks:eni:owner"
+                Value: "amazon-vpc-cni"
+              - 
+                Key: "cluster.k8s.amazonaws.com/name"
+                Value: "DILWL-Campus_Cluster"
+            GroupSet: 
+              - !Ref EC2SecurityGroup4
+
+    EC2NetworkInterface2:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: "Amazon EKS DILWL-Campus_Cluster"
+            PrivateIpAddress: "10.0.2.10"
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: "10.0.2.10"
+                Primary: true
+            SubnetId: !Ref EC2Subnet2
+            SourceDestCheck: true
+            GroupSet: 
+              - !Ref EC2SecurityGroup4
+              - !Ref EC2SecurityGroup2
+
+    EC2NetworkInterface3:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: !Sub "aws-K8S-${EC2Instance}"
+            PrivateIpAddress: "10.0.4.32"
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: "10.0.4.32"
+                Primary: true
+              - 
+                PrivateIpAddress: "10.0.4.112"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.177"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.243"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.247"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.74"
+                Primary: false
+            SubnetId: !Ref EC2Subnet
+            SourceDestCheck: true
+            Tags: 
+              - 
+                Key: "cluster.k8s.amazonaws.com/name"
+                Value: "DILWL-Campus_Cluster"
+              - 
+                Key: "node.k8s.amazonaws.com/createdAt"
+                Value: "2025-07-06T10:48:37Z"
+              - 
+                Key: "eks:eni:owner"
+                Value: "amazon-vpc-cni"
+              - 
+                Key: "node.k8s.amazonaws.com/instance_id"
+                Value: !Ref EC2Instance
+            GroupSet: 
+              - !Ref EC2SecurityGroup4
+
+    EC2NetworkInterface4:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: !Sub "aws-K8S-${EC2Instance}"
+            PrivateIpAddress: "10.0.4.129"
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: "10.0.4.129"
+                Primary: true
+              - 
+                PrivateIpAddress: "10.0.4.164"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.136"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.91"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.62"
+                Primary: false
+              - 
+                PrivateIpAddress: "10.0.4.222"
+                Primary: false
+            SubnetId: !Ref EC2Subnet
+            SourceDestCheck: true
+            Tags: 
+              - 
+                Key: "node.k8s.amazonaws.com/createdAt"
+                Value: "2025-07-06T10:53:50Z"
+              - 
+                Key: "eks:eni:owner"
+                Value: "amazon-vpc-cni"
+              - 
+                Key: "node.k8s.amazonaws.com/instance_id"
+                Value: !Ref EC2Instance
+              - 
+                Key: "cluster.k8s.amazonaws.com/name"
+                Value: "DILWL-Campus_Cluster"
+            GroupSet: 
+              - !Ref EC2SecurityGroup4
+
+    EC2NetworkInterface5:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: !Sub "Interface for NAT Gateway ${EC2NatGateway2}"
+            PrivateIpAddress: "10.0.2.79"
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: "10.0.2.79"
+                Primary: true
+            SubnetId: !Ref EC2Subnet2
+            SourceDestCheck: false
+
+    EC2NetworkInterface6:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: "ELB a25eb1b9c599f466da64259b9ac764bf"
+            PrivateIpAddress: "10.0.2.207"
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: "10.0.2.207"
+                Primary: true
+            SubnetId: !Ref EC2Subnet2
+            SourceDestCheck: true
+            GroupSet: 
+              - !Ref EC2SecurityGroup
+
+    EC2NetworkInterface7:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: !Sub "Interface for NAT Gateway ${EC2NatGateway}"
+            PrivateIpAddress: "10.0.1.20"
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: "10.0.1.20"
+                Primary: true
+            SubnetId: !Ref EC2Subnet3
+            SourceDestCheck: false
+
+    EC2NetworkInterface8:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: "ELB a25eb1b9c599f466da64259b9ac764bf"
+            PrivateIpAddress: "10.0.1.190"
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: "10.0.1.190"
+                Primary: true
+            SubnetId: !Ref EC2Subnet3
+            SourceDestCheck: true
+            GroupSet: 
+              - !Ref EC2SecurityGroup
+
+    EC2NetworkInterface9:
+        Type: "AWS::EC2::NetworkInterface"
+        Properties:
+            Description: "Amazon EKS DILWL-Campus_Cluster"
+            PrivateIpAddress: "10.0.3.152"
+            PrivateIpAddresses: 
+              - 
+                PrivateIpAddress: "10.0.3.152"
+                Primary: true
+            SubnetId: !Ref EC2Subnet4
+            SourceDestCheck: true
+            GroupSet: 
+              - !Ref EC2SecurityGroup4
+              - !Ref EC2SecurityGroup2
+
+    EC2NetworkInterfaceAttachment:
+        Type: "AWS::EC2::NetworkInterfaceAttachment"
+        Properties:
+            NetworkInterfaceId: "eni-0229f00254f7556a2"
+            DeviceIndex: 0
+            InstanceId: !Ref EC2Instance
+            DeleteOnTermination: true
+
+    EC2NetworkInterfaceAttachment2:
+        Type: "AWS::EC2::NetworkInterfaceAttachment"
+        Properties:
+            NetworkInterfaceId: "eni-050b56a507f412b86"
+            DeviceIndex: 1
+            InstanceId: !Ref EC2Instance
+            DeleteOnTermination: true
+
+    EC2NetworkInterfaceAttachment3:
+        Type: "AWS::EC2::NetworkInterfaceAttachment"
+        Properties:
+            NetworkInterfaceId: "eni-0061a80b5020e1298"
+            DeviceIndex: 2
+            InstanceId: !Ref EC2Instance
+            DeleteOnTermination: true
+
+    EC2NetworkInterfacePermission:
+        Type: "AWS::EC2::NetworkInterfacePermission"
+        Properties:
+            AwsAccountId: "393542551388"
+            NetworkInterfaceId: "eni-0eba209ff55bed237"
+            Permission: "INSTANCE-ATTACH"
+
+    EC2NetworkInterfacePermission2:
+        Type: "AWS::EC2::NetworkInterfacePermission"
+        Properties:
+            AwsAccountId: "393542551388"
+            NetworkInterfaceId: "eni-012c43b7bb53aa58e"
+            Permission: "INSTANCE-ATTACH"
+
+    EC2KeyPair:
+        Type: "AWS::EC2::KeyPair"
+        Properties:
+            KeyName: "vockey"
+            KeyType: "rsa"
+
+    ECRRepository:
+        Type: "AWS::ECR::Repository"
+        Properties:
+            RepositoryName: "dilwl-campus-4122"
+            LifecyclePolicy: 
+                RegistryId: !Ref AWS::AccountId
+
+    EKSCluster:
+        Type: "AWS::EKS::Cluster"
+        Properties:
+            Name: "DILWL-Campus_Cluster"
+            RoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/c163215a4191986l10575984t1w971882-LabEksClusterRole-sqviJNuowUiZ"
+            Version: "1.33"
+            ResourcesVpcConfig: 
+                SecurityGroupIds: 
+                  - !Ref EC2SecurityGroup2
+                SubnetIds: 
+                  - !Ref EC2Subnet
+                  - !Ref EC2Subnet3
+                  - !Ref EC2Subnet2
+                  - !Ref EC2Subnet4
+            KubernetesNetworkConfig: 
+                ServiceIpv4Cidr: "172.20.0.0/16"
+
+    EKSNodegroup:
+        Type: "AWS::EKS::Nodegroup"
+        Properties:
+            NodegroupName: "EKS_node"
+            ClusterName: "DILWL-Campus_Cluster"
+            Version: "1.33"
+            ReleaseVersion: "1.33.0-20250620"
+            ScalingConfig: 
+                MinSize: 1
+                MaxSize: 1
+                DesiredSize: 1
+            InstanceTypes: 
+              - "t3.medium"
+            Subnets: 
+              - !Ref EC2Subnet
+              - !Ref EC2Subnet4
+            AmiType: "AL2023_x86_64_STANDARD"
+            NodeRole: !Sub "arn:aws:iam::${AWS::AccountId}:role/c163215a4191986l10575984t1w971882029-LabEksNodeRole-J5wPI0lutyB5"
+            Labels: {}
+            DiskSize: 30
+            Tags: {}
+            CapacityType: "ON_DEMAND"
+
+    EKSAddon:
+        Type: "AWS::EKS::Addon"
+        Properties:
+            AddonName: "metrics-server"
+            AddonVersion: "v0.7.2-eksbuild.4"
+            ClusterName: "DILWL-Campus_Cluster"
+
+    EKSAddon2:
+        Type: "AWS::EKS::Addon"
+        Properties:
+            AddonName: "kube-proxy"
+            AddonVersion: "v1.33.0-eksbuild.2"
+            ClusterName: "DILWL-Campus_Cluster"
+
+    EKSAddon3:
+        Type: "AWS::EKS::Addon"
+        Properties:
+            AddonName: "coredns"
+            AddonVersion: "v1.12.1-eksbuild.2"
+            ClusterName: "DILWL-Campus_Cluster"
+
+    EKSAddon4:
+        Type: "AWS::EKS::Addon"
+        Properties:
+            AddonName: "eks-pod-identity-agent"
+            AddonVersion: "v1.3.7-eksbuild.2"
+            ClusterName: "DILWL-Campus_Cluster"
+
+    EKSAddon5:
+        Type: "AWS::EKS::Addon"
+        Properties:
+            AddonName: "vpc-cni"
+            AddonVersion: "v1.19.5-eksbuild.1"
+            ClusterName: "DILWL-Campus_Cluster"
+
+    S3Bucket:
+        Type: "AWS::S3::Bucket"
+        Properties:
+            BucketName: "dilwl-4122-2403"
+            BucketEncryption: 
+                ServerSideEncryptionConfiguration: 
+                  - 
+                    ServerSideEncryptionByDefault: 
+                        SSEAlgorithm: "AES256"
+                    BucketKeyEnabled: true
+            OwnershipControls: 
+                Rules: 
+                  - 
+                    ObjectOwnership: "BucketOwnerEnforced"
+            PublicAccessBlockConfiguration: 
+                BlockPublicAcls: false
+                BlockPublicPolicy: false
+                IgnorePublicAcls: false
+                RestrictPublicBuckets: false
+
+    S3BucketPolicy:
+        Type: "AWS::S3::BucketPolicy"
+        Properties:
+            Bucket: !Ref S3Bucket
+            PolicyDocument: 
+                Version: "2012-10-17"
+                Statement: 
+                  - 
+                    Sid: "PublicReadGetObject"
+                    Effect: "Allow"
+                    Principal: "*"
+                    Action: "s3:GetObject"
+                    Resource: !Sub "arn:aws:s3:::${S3Bucket}/*"
+
+    DynamoDBTable:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "post_id"
+                AttributeType: "S"
+              - 
+                AttributeName: "timestamp"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "comments"
+            KeySchema: 
+              - 
+                AttributeName: "post_id"
+                KeyType: "HASH"
+              - 
+                AttributeName: "timestamp"
+                KeyType: "RANGE"
+
+    DynamoDBTable2:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "timestamp"
+                AttributeType: "S"
+              - 
+                AttributeName: "user_id"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "notifications"
+            KeySchema: 
+              - 
+                AttributeName: "user_id"
+                KeyType: "HASH"
+              - 
+                AttributeName: "timestamp"
+                KeyType: "RANGE"
+
+    DynamoDBTable3:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "post_id"
+                AttributeType: "S"
+              - 
+                AttributeName: "user_id"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "post_bookmark"
+            KeySchema: 
+              - 
+                AttributeName: "user_id"
+                KeyType: "HASH"
+              - 
+                AttributeName: "post_id"
+                KeyType: "RANGE"
+
+    DynamoDBTable4:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "post_id"
+                AttributeType: "S"
+              - 
+                AttributeName: "user_id"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "post_history"
+            KeySchema: 
+              - 
+                AttributeName: "user_id"
+                KeyType: "HASH"
+              - 
+                AttributeName: "post_id"
+                KeyType: "RANGE"
+
+    DynamoDBTable5:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "post_id"
+                AttributeType: "S"
+              - 
+                AttributeName: "user_id"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "post_vote"
+            KeySchema: 
+              - 
+                AttributeName: "user_id"
+                KeyType: "HASH"
+              - 
+                AttributeName: "post_id"
+                KeyType: "RANGE"
+
+    DynamoDBTable6:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "id"
+                AttributeType: "S"
+              - 
+                AttributeName: "timestamp"
+                AttributeType: "S"
+              - 
+                AttributeName: "user_id"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "posts"
+            KeySchema: 
+              - 
+                AttributeName: "id"
+                KeyType: "HASH"
+            GlobalSecondaryIndexes: 
+              - 
+                IndexName: "user_id-timestamp-index"
+                KeySchema: 
+                  - 
+                    AttributeName: "user_id"
+                    KeyType: "HASH"
+                  - 
+                    AttributeName: "timestamp"
+                    KeyType: "RANGE"
+                Projection: 
+                    ProjectionType: "ALL"
+                ProvisionedThroughput: 
+                    ReadCapacityUnits: 0
+                    WriteCapacityUnits: 0
+
+    DynamoDBTable7:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "blocked_id"
+                AttributeType: "S"
+              - 
+                AttributeName: "blocker_id"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "user_block"
+            KeySchema: 
+              - 
+                AttributeName: "blocker_id"
+                KeyType: "HASH"
+              - 
+                AttributeName: "blocked_id"
+                KeyType: "RANGE"
+
+    DynamoDBTable8:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "recipient_id"
+                AttributeType: "S"
+              - 
+                AttributeName: "timestamp"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "private_message"
+            KeySchema: 
+              - 
+                AttributeName: "recipient_id"
+                KeyType: "HASH"
+              - 
+                AttributeName: "timestamp"
+                KeyType: "RANGE"
+
+    DynamoDBTable9:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "followed_id"
+                AttributeType: "S"
+              - 
+                AttributeName: "follower_id"
+                AttributeType: "S"
+              - 
+                AttributeName: "timestamp"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "user_follow"
+            KeySchema: 
+              - 
+                AttributeName: "follower_id"
+                KeyType: "HASH"
+              - 
+                AttributeName: "followed_id"
+                KeyType: "RANGE"
+            GlobalSecondaryIndexes: 
+              - 
+                IndexName: "followed_id-timestamp-index"
+                KeySchema: 
+                  - 
+                    AttributeName: "followed_id"
+                    KeyType: "HASH"
+                  - 
+                    AttributeName: "timestamp"
+                    KeyType: "RANGE"
+                Projection: 
+                    ProjectionType: "ALL"
+                ProvisionedThroughput: 
+                    ReadCapacityUnits: 0
+                    WriteCapacityUnits: 0
+
+    DynamoDBTable10:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+            AttributeDefinitions: 
+              - 
+                AttributeName: "email"
+                AttributeType: "S"
+              - 
+                AttributeName: "id"
+                AttributeType: "S"
+              - 
+                AttributeName: "phone"
+                AttributeType: "S"
+              - 
+                AttributeName: "username"
+                AttributeType: "S"
+            BillingMode: "PAY_PER_REQUEST"
+            TableName: "users"
+            KeySchema: 
+              - 
+                AttributeName: "id"
+                KeyType: "HASH"
+            GlobalSecondaryIndexes: 
+              - 
+                IndexName: "username-index"
+                KeySchema: 
+                  - 
+                    AttributeName: "username"
+                    KeyType: "HASH"
+                Projection: 
+                    ProjectionType: "ALL"
+                ProvisionedThroughput: 
+                    ReadCapacityUnits: 0
+                    WriteCapacityUnits: 0
+              - 
+                IndexName: "email-index"
+                KeySchema: 
+                  - 
+                    AttributeName: "email"
+                    KeyType: "HASH"
+                Projection: 
+                    ProjectionType: "ALL"
+                ProvisionedThroughput: 
+                    ReadCapacityUnits: 0
+                    WriteCapacityUnits: 0
+              - 
+                IndexName: "phone-index"
+                KeySchema: 
+                  - 
+                    AttributeName: "phone"
+                    KeyType: "HASH"
+                Projection: 
+                    ProjectionType: "ALL"
+                ProvisionedThroughput: 
+                    ReadCapacityUnits: 0
+                    WriteCapacityUnits: 0
+
+    EC2VPC:
+        Type: "AWS::EC2::VPC"
+        Properties:
+            CidrBlock: "10.0.0.0/16"
+            EnableDnsSupport: true
+            EnableDnsHostnames: false
+            InstanceTenancy: "default"
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "DILWL_Campus-VPC"
+
+    EC2VPCGatewayAttachment:
+        Type: "AWS::EC2::VPCGatewayAttachment"
+        Properties:
+            InternetGatewayId: !Ref EC2InternetGateway
+            VpcId: !Ref EC2VPC
+
+    EC2Subnet:
+        Type: "AWS::EC2::Subnet"
+        Properties:
+            AvailabilityZone: !GetAtt EC2Subnet2.AvailabilityZone
+            CidrBlock: "10.0.4.0/24"
+            VpcId: !Ref EC2VPC
+            MapPublicIpOnLaunch: false
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "private2"
+
+    EC2Subnet2:
+        Type: "AWS::EC2::Subnet"
+        Properties:
+            AvailabilityZone: !Sub "${AWS::Region}b"
+            CidrBlock: "10.0.2.0/24"
+            VpcId: !Ref EC2VPC
+            MapPublicIpOnLaunch: false
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "public2"
+
+    EC2Subnet3:
+        Type: "AWS::EC2::Subnet"
+        Properties:
+            AvailabilityZone: !GetAtt EC2Subnet4.AvailabilityZone
+            CidrBlock: "10.0.1.0/24"
+            VpcId: !Ref EC2VPC
+            MapPublicIpOnLaunch: false
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "public1"
+
+    EC2Subnet4:
+        Type: "AWS::EC2::Subnet"
+        Properties:
+            AvailabilityZone: !Sub "${AWS::Region}a"
+            CidrBlock: "10.0.3.0/24"
+            VpcId: !Ref EC2VPC
+            MapPublicIpOnLaunch: false
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "private1"
+
+    EC2NatGateway:
+        Type: "AWS::EC2::NatGateway"
+        Properties:
+            SubnetId: !Ref EC2Subnet3
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "DILWL_Campus-NAT-gateway 1"
+            AllocationId: !GetAtt EC2EIP2.AllocationId
+
+    EC2NatGateway2:
+        Type: "AWS::EC2::NatGateway"
+        Properties:
+            SubnetId: !Ref EC2Subnet2
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "DILWL_Campus-NAT-gateway 2"
+            AllocationId: !GetAtt EC2EIP.AllocationId
+
+    EC2InternetGateway:
+        Type: "AWS::EC2::InternetGateway"
+        Properties:
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "DILWL_Campus-Internet-Gateway"
+
+    EC2Route:
+        Type: "AWS::EC2::Route"
+        Properties:
+            DestinationCidrBlock: "0.0.0.0/0"
+            GatewayId: !Ref EC2InternetGateway
+            RouteTableId: !Ref EC2RouteTable
+
+    EC2EIP:
+        Type: "AWS::EC2::EIP"
+        Properties:
+            Domain: "vpc"
+
+    EC2EIPAssociation:
+        Type: "AWS::EC2::EIPAssociation"
+        Properties:
+            AllocationId: !GetAtt EC2EIP.AllocationId
+            NetworkInterfaceId: "eni-0bc523114e255d2c0"
+            PrivateIpAddress: "10.0.2.79"
+
+    EC2EIP2:
+        Type: "AWS::EC2::EIP"
+        Properties:
+            Domain: "vpc"
+
+    EC2EIPAssociation2:
+        Type: "AWS::EC2::EIPAssociation"
+        Properties:
+            AllocationId: !GetAtt EC2EIP2.AllocationId
+            NetworkInterfaceId: "eni-0fea8c1e7abc8cffb"
+            PrivateIpAddress: "10.0.1.20"
+
+    EC2RouteTable:
+        Type: "AWS::EC2::RouteTable"
+        Properties:
+            VpcId: !Ref EC2VPC
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "public_route_table"
+
+    EC2RouteTable2:
+        Type: "AWS::EC2::RouteTable"
+        Properties:
+            VpcId: !Ref EC2VPC
+
+    EC2RouteTable3:
+        Type: "AWS::EC2::RouteTable"
+        Properties:
+            VpcId: !Ref EC2VPC
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "private_route_table 1"
+
+    EC2RouteTable4:
+        Type: "AWS::EC2::RouteTable"
+        Properties:
+            VpcId: !Ref EC2VPC
+            Tags: 
+              - 
+                Key: "Name"
+                Value: "private_route_table 2"
+
+    EC2Route2:
+        Type: "AWS::EC2::Route"
+        Properties:
+            DestinationCidrBlock: "0.0.0.0/0"
+            NatGatewayId: !Ref EC2NatGateway
+            RouteTableId: !Ref EC2RouteTable3
+
+    EC2Route3:
+        Type: "AWS::EC2::Route"
+        Properties:
+            DestinationCidrBlock: "0.0.0.0/0"
+            NatGatewayId: !Ref EC2NatGateway2
+            RouteTableId: !Ref EC2RouteTable4
+
+    EC2SubnetRouteTableAssociation:
+        Type: "AWS::EC2::SubnetRouteTableAssociation"
+        Properties:
+            RouteTableId: !Ref EC2RouteTable
+            SubnetId: !Ref EC2Subnet2
+
+    EC2SubnetRouteTableAssociation2:
+        Type: "AWS::EC2::SubnetRouteTableAssociation"
+        Properties:
+            RouteTableId: !Ref EC2RouteTable
+            SubnetId: !Ref EC2Subnet3
+
+    EC2SubnetRouteTableAssociation3:
+        Type: "AWS::EC2::SubnetRouteTableAssociation"
+        Properties:
+            RouteTableId: !Ref EC2RouteTable3
+            SubnetId: !Ref EC2Subnet4
+
+    EC2SubnetRouteTableAssociation4:
+        Type: "AWS::EC2::SubnetRouteTableAssociation"
+        Properties:
+            RouteTableId: !Ref EC2RouteTable4
+            SubnetId: !Ref EC2Subnet
+
+    Route53HostedZone:
+        Type: "AWS::Route53::HostedZone"
+        Properties:
+            Name: !Ref Route53RecordSet
+
+    Route53RecordSet:
+        Type: "AWS::Route53::RecordSet"
+        Properties:
+            Name: !Ref Route53RecordSet2
+            Type: "NS"
+            TTL: 172800
+            ResourceRecords: 
+              - "ns-608.awsdns-12.net."
+              - "ns-1507.awsdns-60.org."
+              - "ns-1868.awsdns-41.co.uk."
+              - "ns-306.awsdns-38.com."
+            HostedZoneId: "Z081153528NGZ5T7M8LKB"
+
+    Route53RecordSet2:
+        Type: "AWS::Route53::RecordSet"
+        Properties:
+            Name: "project4122dilwl.tech."
+            Type: "SOA"
+            TTL: 900
+            ResourceRecords: 
+              - "ns-608.awsdns-12.net. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
+            HostedZoneId: "Z081153528NGZ5T7M8LKB"
+
+    Route53RecordSet3:
+        Type: "AWS::Route53::RecordSet"
+        Properties:
+            Name: !Sub "240302611.${Route53RecordSet}"
+            Type: "A"
+            AliasTarget: 
+                HostedZoneId: "Z35SXDOTRQ7X7K"
+                DNSName: !Sub "dualstack.a25eb1b9c599f466da64259b9ac764bf-1903501135.${AWS::Region}.elb.amazonaws.com."
+                EvaluateTargetHealth: true
+            HostedZoneId: !Ref Route53HostedZone
+
+    Route53RecordSet4:
+        Type: "AWS::Route53::RecordSet"
+        Properties:
+            Name: !Sub "4122project.${Route53RecordSet}"
+            Type: "A"
+            AliasTarget: 
+                HostedZoneId: "Z35SXDOTRQ7X7K"
+                DNSName: !Sub "dualstack.a8eb1fdaec6504dae9d3ae8ebc726582-1548071716.${AWS::Region}.elb.amazonaws.com."
+                EvaluateTargetHealth: true
+            HostedZoneId: !Ref Route53HostedZone
+

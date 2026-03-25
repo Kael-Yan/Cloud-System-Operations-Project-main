@@ -1,0 +1,234 @@
+{% extends "base.html.j2" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    body.dark-mode .login-modal {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .login-content {
+        background-color: #2d2d2d;
+    }
+
+    body.dark-mode .form-control {
+        background-color: #444;
+        color: #e0e0e0;
+        border-color: #555;
+    }
+
+    body.dark-mode .form-control:focus {
+        background-color: #555;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .btn-hk-golden {
+        background-color: #3a5f8a;
+        border-color: #3a5f8a;
+    }
+
+    body.dark-mode .btn-hk-golden:hover {
+        background-color: #4a6f9a;
+        border-color: #4a6f9a;
+    }
+
+    body.dark-mode a {
+        color: #5a8fd3;
+    }
+    
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 1000;
+        display: none;
+    }
+    
+    .login-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 0;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        z-index: 1001;
+        width: 800px;
+        max-width: 90%;
+        display: none;
+        overflow: hidden;
+    }
+    
+    .login-header-bar {
+        height: 60px;
+        width: 100%;
+        background: linear-gradient(90deg, #346599);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .login-header-bar h2 {
+        color: white;
+        margin: 0;
+        font-weight: bold;
+        font-size: 20px;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .login-content {
+        padding: 25px 100px;;
+    }
+    
+    .form-container {
+        padding: 30px 30px;
+    }
+    
+    .btn-hk-golden {
+        background-color: #346599;
+        border-color: #346599;
+        color: white;
+        font-weight: bold;
+        padding: 12px 30px;
+        font-size: 16px;
+        width: 60%;
+        margin: 20px auto 0;
+        display: block;
+        border-radius: 4px;
+        transition: all 0.3s;
+    }
+    
+    .btn-hk-golden:hover {
+        background-color: #24466b;
+        border-color: #24466b;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-control {
+        height: 45px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 10px 15px;
+        font-size: 15px;
+        width: 100%;
+    }
+    
+    .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 15px;
+        font-size: 30px;
+        cursor: pointer;
+        color: white;
+        z-index: 2;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .close-btn:hover {
+        color: #ffcc00;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="modal-overlay" id="loginOverlay"></div>
+
+<div class="login-modal" id="loginModal">
+    <div class="login-header-bar">
+        <h2><span class="glyphicon glyphicon-user" ></span> 登入</h2>
+        <span class="close-btn" id="closeLogin">&times;</span>
+    </div>
+    
+    <div class="login-content">
+        {% if request.args.get('next') %}
+        <div class="alert alert-info" style="text-align: center; margin-bottom: 20px;">
+            請先登入以訪問此頁面
+        </div>
+        {% endif %}
+        
+        {{ wtf.quick_form(form, button_map={'submit': 'hk-golden'}, 
+           extra_classes='form-horizontal') }}
+        
+        <div style="text-align: center; margin-top: 25px;">
+            <p style="margin-bottom: 10px; font-size: 14px;">
+            還沒有帳號？
+                <a href="{{ url_for('register') }}" style="color: #346599; text-decoration: underline;">
+                    立即註冊
+                </a>
+            </p>
+            <p style="font-size: 14px;">
+                <a href="{{ url_for('reset_password_request') }}" style="color: #346599; text-decoration: underline;">
+                    忘記密碼？
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="mainContent">
+    {{ super() }}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $(document).ready(function() {
+        // Show login modal
+        function showLoginModal() {
+            $('#loginOverlay').fadeIn(200);
+            $('#loginModal').fadeIn(300);
+            $('body').css('overflow', 'hidden');
+        }
+        
+        // Hide login modal and redirect to 吹水台
+        function hideLoginModal() {
+            $('#loginOverlay').fadeOut(200);
+            $('#loginModal').fadeOut(300, function() {
+                // Redirect after the fade out completes
+                window.location.href = "{{ url_for('category', category='吹水台') }}";
+            });
+            $('body').css('overflow', 'auto');
+        }
+        
+        // Handle login link clicks
+        $('a[href="{{ url_for('login') }}"]').click(function(e) {
+            e.preventDefault();
+            showLoginModal();
+        });
+        
+        // Handle close button click
+        $('#closeLogin').click(hideLoginModal);
+        
+        // Handle overlay click
+        $('#loginOverlay').click(hideLoginModal);
+        
+        // Handle ESC key press
+        $(document).keyup(function(e) {
+            if (e.key === "Escape") {
+                hideLoginModal();
+            }
+        });
+        
+        // Show modal if directly accessing login page
+        {% if request.path == url_for('login') %}
+        showLoginModal();
+        {% endif %}
+    });
+</script>
+{% endblock %}
