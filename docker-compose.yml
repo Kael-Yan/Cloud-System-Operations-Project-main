@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hkgolden_app
+    volumes:
+      - .:/app
+      - /var/www/hkgolden/uploads:/app/app/static/uploads
+    working_dir: /app
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_DEBUG=true
+      - AWS_DEFAULT_REGION=ap-east-1
+      - AWS_ACCESS_KEY_ID=fake
+      - AWS_SECRET_ACCESS_KEY=fake
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+      - MAIL_SERVER=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USE_TLS=true
+      - MAIL_USERNAME=tszchen8@gmail.com
+      - MAIL_PASSWORD=hdjzrqmyvmnmtrok
+      - MAIL_DEFAULT_SENDER=tszchen8@gmail.com
+      - SECRET_KEY=e304d75e32b3900541368dd13fdd1029d72d7a12c280d3477c072ea7e75a5ca1
+      - SECURITY_PASSWORD_SALT=your-password-salt
+      - SECURE_RESET_PASSWORD=True
+      - RESET_PASSWORD_TOKEN_EXPIRATION=600
+      - RESET_PASSWORD_MAX_ATTEMPTS=3
+      - RESET_PASSWORD_COOLDOWN=300
+    depends_on:
+      - dynamodb-local
+
+  dynamodb-local:
+    image: amazon/dynamodb-local
+    container_name: hkgolden_dynamodb
+    ports:
+      - "8000:8000"
+    command: -jar DynamoDBLocal.jar -inMemory -sharedDb 
